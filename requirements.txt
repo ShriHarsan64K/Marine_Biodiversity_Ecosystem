@@ -1,0 +1,46 @@
+# -------------------------------------------------------------------------
+# Marine Biodiversity Project -- Python Requirements
+# Install: pip install -r requirements.txt
+# PyTorch (CUDA 11.8) must be installed separately -- see README.md
+# -------------------------------------------------------------------------
+
+# Deep learning
+# torch==2.0.1          # Install via: pip install torch==2.0.1+cu118 ...
+# torchvision==0.15.2   # Install via: pip install torchvision==0.15.2+cu118
+ultralytics==8.0.196
+
+# Computer vision & image processing
+opencv-python==4.8.1.78
+Pillow>=10.0.0
+imagehash>=4.3.1
+
+# Numerical / data science
+numpy==1.26.4
+pandas>=2.1.0
+scipy>=1.11.0
+
+# Visualisation
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# ML utilities
+scikit-learn>=1.3.0
+
+# Configuration & serialisation
+PyYAML>=6.0.1
+pydantic>=2.0.0
+
+# Progress & logging
+tqdm>=4.66.0
+loguru>=0.7.0
+
+# Dataset APIs
+roboflow>=1.0.0
+kaggle>=1.5.16
+
+# Jupyter (optional but recommended)
+jupyterlab>=4.0.0
+ipywidgets>=8.0.0
+
+# Testing
+pytest>=7.4.0

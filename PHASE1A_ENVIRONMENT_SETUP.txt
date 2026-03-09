@@ -1,0 +1,1242 @@
+═══════════════════════════════════════════════════════════════════════════
+PHASE 1A: ENVIRONMENT SETUP - COMPLETE GUIDE
+═══════════════════════════════════════════════════════════════════════════
+
+Project: Marine Biodiversity Ecosystem Health Assessment
+Author: Shri Harsan M | M.Tech Data Science | SRM Institute
+Phase: 1A - Environment Setup
+Duration: Week 1 (3-5 days)
+Status: READY TO START
+
+═══════════════════════════════════════════════════════════════════════════
+📋 PHASE 1A OBJECTIVES
+═══════════════════════════════════════════════════════════════════════════
+
+✅ Validate hardware compatibility
+✅ Install Python 3.11+ environment
+✅ Configure CUDA 11.8 + PyTorch 2.0
+✅ Install Ultralytics YOLOv8 and dependencies
+✅ Set up Git version control
+✅ Create project directory structure
+✅ Test installation with sample inference
+✅ Document environment for reproducibility
+
+═══════════════════════════════════════════════════════════════════════════
+🖥️ STEP 1: HARDWARE VALIDATION
+═══════════════════════════════════════════════════════════════════════════
+
+MINIMUM REQUIREMENTS:
+--------------------
+GPU: NVIDIA RTX 3050 (6GB VRAM)
+CPU: Intel i5-12450H or AMD Ryzen 5 5600H
+RAM: 16GB DDR4
+Storage: 100GB free SSD space (500GB recommended)
+OS: Ubuntu 22.04 LTS or Windows 11 with WSL2
+
+RECOMMENDED CONFIGURATION:
+-------------------------
+GPU: NVIDIA RTX 3060 (12GB VRAM) or higher
+CPU: Intel i7-12700H or AMD Ryzen 7 5800H
+RAM: 32GB DDR4
+Storage: 500GB+ NVMe SSD
+OS: Ubuntu 22.04 LTS (native, not VM)
+
+COMPATIBILITY CHECK:
+-------------------
+
+1. Check NVIDIA GPU:
+   
+   Linux/WSL:
+   $ lspci | grep -i nvidia
+   
+   Expected Output:
+   01:00.0 VGA compatible controller: NVIDIA Corporation GA106 [GeForce RTX 3050]
+   
+   Windows:
+   > nvidia-smi
+   
+   Expected Output:
+   +-----------------------------------------------------------------------------+
+   | NVIDIA-SMI 535.xx       Driver Version: 535.xx       CUDA Version: 12.2     |
+   |-------------------------------+----------------------+----------------------+
+   | GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+   |   0  NVIDIA GeForce ... Off  | 00000000:01:00.0 On |                  N/A |
+   +-------------------------------+----------------------+----------------------+
+
+2. Verify CUDA-capable GPU:
+   
+   $ nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+   
+   Expected:
+   name, driver_version, memory.total [MiB]
+   NVIDIA GeForce RTX 3050, 535.xx, 6144
+
+3. Check available disk space:
+   
+   $ df -h
+   
+   Required: At least 100GB free on /home partition
+
+4. Verify RAM:
+   
+   $ free -h
+   
+   Required: At least 16GB total
+
+TROUBLESHOOTING:
+---------------
+
+Issue: nvidia-smi not found
+Solution:
+  Ubuntu: sudo apt install nvidia-driver-535
+  Windows: Download from nvidia.com/Download/index.aspx
+
+Issue: CUDA version mismatch
+Solution: We'll install specific CUDA 11.8 toolkit in Step 3
+
+Issue: Insufficient VRAM
+Solution: 
+  - Close all GPU-intensive applications
+  - Reduce YOLOv8 batch size (we'll use batch=8 for 6GB VRAM)
+  - Consider cloud GPU (AWS g4dn.xlarge, GCP n1-standard-4 with T4)
+
+═══════════════════════════════════════════════════════════════════════════
+🐍 STEP 2: PYTHON 3.11+ INSTALLATION
+═══════════════════════════════════════════════════════════════════════════
+
+OPTION A: UBUNTU 22.04 LTS (RECOMMENDED)
+-----------------------------------------
+
+1. Update package list:
+   
+   $ sudo apt update && sudo apt upgrade -y
+
+2. Install Python 3.11:
+   
+   $ sudo apt install software-properties-common -y
+   $ sudo add-apt-repository ppa:deadsnakes/ppa -y
+   $ sudo apt update
+   $ sudo apt install python3.11 python3.11-venv python3.11-dev -y
+
+3. Verify installation:
+   
+   $ python3.11 --version
+   
+   Expected: Python 3.11.x
+
+4. Install pip:
+   
+   $ curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
+
+5. Verify pip:
+   
+   $ python3.11 -m pip --version
+   
+   Expected: pip 23.x from /usr/local/lib/python3.11/...
+
+OPTION B: WINDOWS 11 + WSL2
+----------------------------
+
+1. Enable WSL2:
+   
+   Open PowerShell as Administrator:
+   > wsl --install -d Ubuntu-22.04
+
+2. Restart computer
+
+3. Launch Ubuntu from Start menu
+
+4. Follow Ubuntu installation steps above
+
+OPTION C: ANACONDA/MINICONDA (ALTERNATIVE)
+-------------------------------------------
+
+1. Download Miniconda:
+   
+   $ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+   $ bash Miniconda3-latest-Linux-x86_64.sh
+
+2. Create environment:
+   
+   $ conda create -n marine_bio python=3.11 -y
+   $ conda activate marine_bio
+
+3. Verify:
+   
+   $ python --version
+   
+   Expected: Python 3.11.x
+
+OPTION D: PYENV (FOR VERSION MANAGEMENT)
+-----------------------------------------
+
+1. Install pyenv:
+   
+   $ curl https://pyenv.run | bash
+
+2. Add to ~/.bashrc:
+   
+   export PATH="$HOME/.pyenv/bin:$PATH"
+   eval "$(pyenv init --path)"
+   eval "$(pyenv init -)"
+
+3. Reload shell:
+   
+   $ source ~/.bashrc
+
+4. Install Python 3.11:
+   
+   $ pyenv install 3.11.7
+   $ pyenv global 3.11.7
+
+5. Verify:
+   
+   $ python --version
+   
+   Expected: Python 3.11.7
+
+RECOMMENDED: Use native Ubuntu Python 3.11 for simplicity
+
+═══════════════════════════════════════════════════════════════════════════
+🔧 STEP 3: CUDA 11.8 INSTALLATION
+═══════════════════════════════════════════════════════════════════════════
+
+WHY CUDA 11.8?
+- PyTorch 2.0 stable support
+- Ultralytics YOLOv8 compatibility
+- Mature, well-tested version
+
+UBUNTU 22.04 INSTALLATION:
+--------------------------
+
+1. Remove old CUDA versions (if any):
+   
+   $ sudo apt --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" \
+     "*curand*" "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" \
+     "nsight*" "*nvvm*"
+
+2. Download CUDA 11.8 toolkit:
+   
+   $ wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
+
+3. Install CUDA:
+   
+   $ sudo sh cuda_11.8.0_520.61.05_linux.run
+   
+   Options:
+   - Accept EULA
+   - DESELECT "Driver" (if nvidia-smi already works)
+   - SELECT "CUDA Toolkit 11.8"
+   - SELECT "CUDA Samples"
+
+4. Add to PATH (~/.bashrc):
+   
+   $ echo 'export PATH=/usr/local/cuda-11.8/bin:$PATH' >> ~/.bashrc
+   $ echo 'export LD_LIBRARY_PATH=/usr/local/cuda-11.8/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+   $ source ~/.bashrc
+
+5. Verify installation:
+   
+   $ nvcc --version
+   
+   Expected:
+   nvcc: NVIDIA (R) Cuda compiler driver
+   Cuda compilation tools, release 11.8, V11.8.89
+
+6. Test CUDA with sample:
+   
+   $ cd /usr/local/cuda-11.8/samples/1_Utilities/deviceQuery
+   $ sudo make
+   $ ./deviceQuery
+   
+   Expected:
+   Device 0: "NVIDIA GeForce RTX 3050"
+     CUDA Capability Major/Minor version number:    8.6
+     Total amount of global memory:                 6144 MBytes
+   Result = PASS
+
+WINDOWS 11 + WSL2:
+------------------
+
+1. Install CUDA Toolkit for WSL:
+   
+   $ wget https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-wsl-ubuntu.pin
+   $ sudo mv cuda-wsl-ubuntu.pin /etc/apt/preferences.d/cuda-repository-pin-600
+   $ wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda-repo-wsl-ubuntu-11-8-local_11.8.0-1_amd64.deb
+   $ sudo dpkg -i cuda-repo-wsl-ubuntu-11-8-local_11.8.0-1_amd64.deb
+   $ sudo cp /var/cuda-repo-wsl-ubuntu-11-8-local/cuda-*-keyring.gpg /usr/share/keyrings/
+   $ sudo apt update
+   $ sudo apt install cuda-11-8 -y
+
+2. Follow steps 4-6 from Ubuntu instructions above
+
+TROUBLESHOOTING:
+---------------
+
+Issue: "CUDA driver version is insufficient"
+Solution: Update NVIDIA driver to 520+ (sudo apt install nvidia-driver-535)
+
+Issue: nvcc not found after installation
+Solution: Verify PATH export in ~/.bashrc and restart terminal
+
+Issue: Multiple CUDA versions conflict
+Solution: Use update-alternatives to set default CUDA version
+
+═══════════════════════════════════════════════════════════════════════════
+📦 STEP 4: PYTORCH 2.0 INSTALLATION
+═══════════════════════════════════════════════════════════════════════════
+
+INSTALLATION:
+------------
+
+1. Create virtual environment (RECOMMENDED):
+   
+   $ python3.11 -m venv ~/marine_venv
+   $ source ~/marine_venv/bin/activate
+   
+   Your prompt should now show: (marine_venv)
+
+2. Upgrade pip:
+   
+   (marine_venv) $ pip install --upgrade pip setuptools wheel
+
+3. Install PyTorch 2.0 with CUDA 11.8:
+   
+   (marine_venv) $ pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 \
+     --index-url https://download.pytorch.org/whl/cu118
+
+   Download size: ~2.5GB
+   Installation time: 5-10 minutes
+
+4. Verify PyTorch installation:
+   
+   (marine_venv) $ python -c "import torch; print(f'PyTorch: {torch.__version__}')"
+   
+   Expected: PyTorch: 2.0.1+cu118
+
+5. Verify CUDA availability:
+   
+   (marine_venv) $ python -c "import torch; print(f'CUDA Available: {torch.cuda.is_available()}')"
+   
+   Expected: CUDA Available: True
+
+6. Check GPU details:
+   
+   (marine_venv) $ python -c "import torch; print(f'GPU: {torch.cuda.get_device_name(0)}'); print(f'VRAM: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB')"
+   
+   Expected:
+   GPU: NVIDIA GeForce RTX 3050
+   VRAM: 6.14 GB
+
+TROUBLESHOOTING:
+---------------
+
+Issue: torch.cuda.is_available() returns False
+Solution:
+  1. Check CUDA installation: nvcc --version
+  2. Reinstall PyTorch with correct CUDA version
+  3. Verify NVIDIA driver: nvidia-smi
+
+Issue: RuntimeError: CUDA out of memory
+Solution: This is expected during training, not installation. Ignore for now.
+
+Issue: Slow installation
+Solution: Use faster mirror or download wheel manually:
+  https://download.pytorch.org/whl/torch_stable.html
+
+═══════════════════════════════════════════════════════════════════════════
+🚀 STEP 5: ULTRALYTICS YOLOv8 INSTALLATION
+═══════════════════════════════════════════════════════════════════════════
+
+INSTALLATION:
+------------
+
+1. Install Ultralytics package:
+   
+   (marine_venv) $ pip install ultralytics==8.0.196
+   
+   This installs:
+   - YOLOv8 models (nano, small, medium, large, xlarge)
+   - BoT-SORT tracker
+   - Utilities for training, validation, tracking
+   - CLI tools
+
+2. Verify installation:
+   
+   (marine_venv) $ yolo version
+   
+   Expected: Ultralytics YOLOv8.0.196
+
+3. Test with pretrained model:
+   
+   (marine_venv) $ yolo predict model=yolov8s.pt source='https://ultralytics.com/images/bus.jpg'
+   
+   Expected output:
+   Downloading https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8s.pt...
+   image 1/1: 1080x810 4 persons, 1 bus, 1 stop sign
+   Speed: 4.2ms preprocess, 45.3ms inference, 2.1ms postprocess per image
+   Results saved to runs/detect/predict/
+
+4. Check saved results:
+   
+   (marine_venv) $ ls runs/detect/predict/
+   
+   Expected: bus.jpg (with bounding boxes drawn)
+
+ADDITIONAL DEPENDENCIES:
+-----------------------
+
+1. Install computer vision libraries:
+   
+   (marine_venv) $ pip install opencv-python==4.8.1.78
+   (marine_venv) $ pip install opencv-contrib-python==4.8.1.78
+
+2. Install data science stack:
+   
+   (marine_venv) $ pip install numpy==1.26.4
+   (marine_venv) $ pip install pandas==2.0.3
+   (marine_venv) $ pip install matplotlib==3.8.2
+   (marine_venv) $ pip install seaborn==0.13.1
+   (marine_venv) $ pip install scikit-learn==1.3.2
+   (marine_venv) $ pip install scipy==1.11.4
+
+3. Install image enhancement libraries:
+   
+   (marine_venv) $ pip install Pillow==10.1.0
+   (marine_venv) $ pip install scikit-image==0.22.0
+
+4. Install utilities:
+   
+   (marine_venv) $ pip install tqdm==4.66.1  # Progress bars
+   (marine_venv) $ pip install PyYAML==6.0.1  # Config files
+   (marine_venv) $ pip install tensorboard==2.15.1  # Training visualization
+
+5. Install Jupyter (for experimentation):
+   
+   (marine_venv) $ pip install jupyter==1.0.0
+   (marine_venv) $ pip install ipykernel==6.27.1
+   (marine_venv) $ python -m ipykernel install --user --name=marine_venv
+
+6. Freeze requirements:
+   
+   (marine_venv) $ pip freeze > requirements.txt
+
+VERIFY ALL INSTALLATIONS:
+-------------------------
+
+Create test script:
+
+(marine_venv) $ cat > test_imports.py << 'EOF'
+import sys
+print("Python:", sys.version)
+
+import torch
+print("PyTorch:", torch.__version__)
+print("CUDA Available:", torch.cuda.is_available())
+if torch.cuda.is_available():
+    print("GPU:", torch.cuda.get_device_name(0))
+
+import cv2
+print("OpenCV:", cv2.__version__)
+
+import numpy as np
+print("NumPy:", np.__version__)
+
+import pandas as pd
+print("Pandas:", pd.__version__)
+
+from ultralytics import YOLO
+print("Ultralytics: OK")
+
+print("\n✅ All imports successful!")
+EOF
+
+(marine_venv) $ python test_imports.py
+
+Expected output:
+Python: 3.11.x
+PyTorch: 2.0.1+cu118
+CUDA Available: True
+GPU: NVIDIA GeForce RTX 3050
+OpenCV: 4.8.1
+NumPy: 1.26.4
+Pandas: 2.0.3
+Ultralytics: OK
+
+✅ All imports successful!
+
+═══════════════════════════════════════════════════════════════════════════
+📁 STEP 6: PROJECT DIRECTORY STRUCTURE
+═══════════════════════════════════════════════════════════════════════════
+
+CREATE PROJECT SCAFFOLD:
+------------------------
+
+1. Navigate to workspace:
+   
+   (marine_venv) $ cd ~
+   (marine_venv) $ mkdir -p workspace
+   (marine_venv) $ cd workspace
+
+2. Create project directory:
+   
+   (marine_venv) $ mkdir Marine_Biodiversity_Ecosystem
+   (marine_venv) $ cd Marine_Biodiversity_Ecosystem
+
+3. Create directory structure:
+   
+   (marine_venv) $ mkdir -p {configs,dataset/{raw,processed,videos/{raw,tracked}},models/weights,src/{utils,enhancement,detection,tracking,biodiversity,coral_detection,temporal,dashboard},results/{detection,tracking,enhancement,biodiversity,correlation,temporal,validation,pilot},docs,notebooks,scripts,tests}
+
+4. Verify structure:
+   
+   (marine_venv) $ tree -L 2
+   
+   Expected:
+   .
+   ├── configs/
+   ├── dataset/
+   │   ├── processed/
+   │   ├── raw/
+   │   └── videos/
+   ├── docs/
+   ├── models/
+   │   └── weights/
+   ├── notebooks/
+   ├── results/
+   │   ├── biodiversity/
+   │   ├── correlation/
+   │   ├── detection/
+   │   ├── enhancement/
+   │   ├── pilot/
+   │   ├── temporal/
+   │   ├── tracking/
+   │   └── validation/
+   ├── scripts/
+   ├── src/
+   │   ├── biodiversity/
+   │   ├── coral_detection/
+   │   ├── dashboard/
+   │   ├── detection/
+   │   ├── enhancement/
+   │   ├── temporal/
+   │   ├── tracking/
+   │   └── utils/
+   └── tests/
+
+DIRECTORY EXPLANATION:
+---------------------
+
+configs/          - YAML configuration files (dataset.yaml, training configs)
+dataset/
+  raw/            - Original downloaded datasets (4+ sources)
+  processed/      - Augmented, cleaned, split dataset
+  videos/
+    raw/          - Test videos for tracking/biodiversity
+    tracked/      - Output videos with annotations
+models/
+  weights/        - Trained model checkpoints (best.pt, last.pt)
+src/
+  utils/          - Helper functions (dataset merging, download scripts)
+  enhancement/    - Image enhancement pipeline (Ancuti fusion)
+  detection/      - YOLOv8 training, validation scripts
+  tracking/       - BoT-SORT tracking implementation
+  biodiversity/   - Shannon, MHI, trophic analysis
+  coral_detection/- Coral segmentation model
+  temporal/       - Time-series analysis, forecasting
+  dashboard/      - Web dashboard (FastAPI, Streamlit)
+results/          - All outputs (plots, metrics, reports)
+docs/             - Documentation, phase reports, papers
+notebooks/        - Jupyter notebooks for exploration
+scripts/          - Automation scripts (batch processing)
+tests/            - Unit tests (pytest)
+
+CREATE INITIAL FILES:
+--------------------
+
+1. Create README.md:
+   
+   (marine_venv) $ cat > README.md << 'EOF'
+# Marine Biodiversity Ecosystem Health Assessment
+
+**Author**: Shri Harsan M | M.Tech Data Science | SRM Institute
+
+## Project Overview
+AI-powered reef health monitoring system using indicator species detection.
+
+## Setup
+```bash
+# Create virtual environment
+python3.11 -m venv marine_venv
+source marine_venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+## Usage
+Coming soon...
+
+## License
+MIT License
+EOF
+
+2. Create .gitignore:
+   
+   (marine_venv) $ cat > .gitignore << 'EOF'
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+marine_venv/
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyTorch
+*.pth
+*.pt
+!best.pt  # Keep best model
+
+# Data
+dataset/raw/*
+dataset/processed/*
+*.zip
+*.tar.gz
+
+# Results
+runs/
+results/*/  
+*.png
+*.jpg
+*.mp4
+!docs/*.png  # Keep documentation images
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+EOF
+
+3. Copy requirements.txt:
+   
+   (marine_venv) $ cp ~/marine_venv/requirements.txt .
+
+4. Create initial config:
+   
+   (marine_venv) $ cat > configs/project_config.yaml << 'EOF'
+# Marine Biodiversity Project Configuration
+
+project:
+  name: "Marine Biodiversity Ecosystem Health Assessment"
+  author: "Shri Harsan M"
+  version: "1.0.0"
+
+hardware:
+  device: "cuda"  # cuda or cpu
+  gpu_id: 0
+  batch_size: 16  # Adjust based on VRAM (8 for 6GB, 16 for 8GB+)
+
+paths:
+  dataset_raw: "dataset/raw"
+  dataset_processed: "dataset/processed"
+  models: "models/weights"
+  results: "results"
+
+indicator_species:
+  - butterflyfish
+  - grouper
+  - parrotfish
+  - surgeonfish
+  - damselfish
+  - wrasse
+  - triggerfish
+  - angelfish
+
+weights:
+  butterflyfish: 2.0
+  grouper: 1.8
+  parrotfish: 1.6
+  surgeonfish: 1.4
+  cleaner_wrasse: 1.5
+  triggerfish: 1.3
+  wrasse: 1.2
+  angelfish: 1.1
+  damselfish: 1.0
+EOF
+
+═══════════════════════════════════════════════════════════════════════════
+🔐 STEP 7: GIT VERSION CONTROL
+═══════════════════════════════════════════════════════════════════════════
+
+INITIALIZE GIT REPOSITORY:
+--------------------------
+
+1. Check Git installation:
+   
+   $ git --version
+   
+   Expected: git version 2.34.1 or higher
+   
+   If not installed:
+   $ sudo apt install git -y
+
+2. Configure Git (first-time setup):
+   
+   $ git config --global user.name "Shri Harsan M"
+   $ git config --global user.email "your.email@example.com"
+   $ git config --global init.defaultBranch main
+
+3. Initialize repository:
+   
+   (marine_venv) $ git init
+   
+   Expected: Initialized empty Git repository in .../Marine_Biodiversity_Ecosystem/.git/
+
+4. Add all files:
+   
+   (marine_venv) $ git add .
+
+5. First commit:
+   
+   (marine_venv) $ git commit -m "Initial commit: Project structure and environment setup"
+
+6. Create GitHub repository (optional but recommended):
+   
+   - Go to github.com
+   - Click "New repository"
+   - Name: Marine-Biodiversity-AI
+   - Description: AI-powered reef health monitoring using indicator species
+   - Public or Private (choose based on preference)
+   - Do NOT initialize with README (we already have one)
+   - Click "Create repository"
+
+7. Link local repo to GitHub:
+   
+   (marine_venv) $ git remote add origin https://github.com/YOUR_USERNAME/Marine-Biodiversity-AI.git
+   (marine_venv) $ git branch -M main
+   (marine_venv) $ git push -u origin main
+
+GIT WORKFLOW (FOR FUTURE COMMITS):
+----------------------------------
+
+After completing each phase:
+
+$ git status                           # Check changes
+$ git add .                            # Stage all changes
+$ git commit -m "Phase 1B: Dataset collection complete"
+$ git push origin main                 # Push to GitHub
+
+Create branches for experimental features:
+
+$ git checkout -b experiment/new-augmentation
+# Make changes
+$ git commit -m "Test new augmentation technique"
+$ git checkout main                    # Switch back to main
+$ git merge experiment/new-augmentation  # Merge if successful
+
+═══════════════════════════════════════════════════════════════════════════
+🧪 STEP 8: INSTALLATION VERIFICATION TEST
+═══════════════════════════════════════════════════════════════════════════
+
+COMPREHENSIVE TEST SCRIPT:
+--------------------------
+
+Create verification script:
+
+(marine_venv) $ cat > scripts/verify_installation.py << 'EOF'
+#!/usr/bin/env python3
+"""
+Comprehensive installation verification for Marine Biodiversity Project
+"""
+
+import sys
+import subprocess
+from pathlib import Path
+
+def print_header(text):
+    print(f"\n{'='*70}")
+    print(f"  {text}")
+    print(f"{'='*70}\n")
+
+def check_python():
+    print_header("1. Python Version Check")
+    version = sys.version_info
+    print(f"Python Version: {version.major}.{version.minor}.{version.micro}")
+    if version.major == 3 and version.minor >= 11:
+        print("✅ Python 3.11+ detected")
+        return True
+    else:
+        print("❌ Python 3.11+ required")
+        return False
+
+def check_cuda():
+    print_header("2. CUDA Availability")
+    try:
+        result = subprocess.run(['nvcc', '--version'], 
+                              capture_output=True, text=True)
+        if result.returncode == 0:
+            print(result.stdout)
+            print("✅ CUDA compiler found")
+            return True
+    except FileNotFoundError:
+        print("❌ nvcc not found. CUDA may not be installed.")
+        return False
+
+def check_pytorch():
+    print_header("3. PyTorch + CUDA")
+    try:
+        import torch
+        print(f"PyTorch Version: {torch.__version__}")
+        print(f"CUDA Available: {torch.cuda.is_available()}")
+        
+        if torch.cuda.is_available():
+            print(f"CUDA Version: {torch.version.cuda}")
+            print(f"GPU Device: {torch.cuda.get_device_name(0)}")
+            
+            props = torch.cuda.get_device_properties(0)
+            vram_gb = props.total_memory / 1e9
+            print(f"VRAM: {vram_gb:.2f} GB")
+            
+            if vram_gb >= 6.0:
+                print("✅ Sufficient VRAM for training")
+            else:
+                print("⚠️ Low VRAM. Consider reducing batch size.")
+            
+            # Test CUDA tensor operations
+            x = torch.rand(1000, 1000).cuda()
+            y = torch.rand(1000, 1000).cuda()
+            z = x @ y  # Matrix multiplication
+            print("✅ CUDA tensor operations working")
+            return True
+        else:
+            print("❌ CUDA not available in PyTorch")
+            return False
+    except ImportError:
+        print("❌ PyTorch not installed")
+        return False
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return False
+
+def check_dependencies():
+    print_header("4. Required Packages")
+    packages = {
+        'ultralytics': '8.0+',
+        'cv2': '4.8+',
+        'numpy': '1.26+',
+        'pandas': '2.0+',
+        'matplotlib': '3.8+',
+        'seaborn': '0.13+',
+        'PIL': '10.0+',
+        'yaml': '6.0+',
+    }
+    
+    all_ok = True
+    for package, required_ver in packages.items():
+        try:
+            if package == 'cv2':
+                import cv2 as module
+            elif package == 'PIL':
+                from PIL import Image as module
+            elif package == 'yaml':
+                import yaml as module
+            else:
+                module = __import__(package)
+            
+            version = getattr(module, '__version__', 'unknown')
+            print(f"✅ {package:20s} {version}")
+        except ImportError:
+            print(f"❌ {package:20s} NOT FOUND")
+            all_ok = False
+    
+    return all_ok
+
+def test_yolo_inference():
+    print_header("5. YOLOv8 Inference Test")
+    try:
+        from ultralytics import YOLO
+        import urllib.request
+        import os
+        
+        # Download test image
+        test_img = "test_image.jpg"
+        if not os.path.exists(test_img):
+            print("Downloading test image...")
+            url = "https://ultralytics.com/images/bus.jpg"
+            urllib.request.urlretrieve(url, test_img)
+        
+        # Load pretrained model
+        print("Loading YOLOv8s model...")
+        model = YOLO('yolov8s.pt')
+        
+        # Run inference
+        print("Running inference...")
+        results = model(test_img, verbose=False)
+        
+        # Check results
+        detections = len(results[0].boxes)
+        print(f"✅ Detected {detections} objects")
+        print(f"✅ YOLOv8 working correctly")
+        
+        # Cleanup
+        os.remove(test_img)
+        return True
+        
+    except Exception as e:
+        print(f"❌ YOLOv8 test failed: {e}")
+        return False
+
+def check_directory_structure():
+    print_header("6. Project Structure")
+    required_dirs = [
+        'configs', 'dataset/raw', 'dataset/processed',
+        'models/weights', 'src/utils', 'src/detection',
+        'src/tracking', 'src/biodiversity', 'results',
+        'docs', 'notebooks'
+    ]
+    
+    all_ok = True
+    for dir_path in required_dirs:
+        if Path(dir_path).exists():
+            print(f"✅ {dir_path}")
+        else:
+            print(f"❌ {dir_path} - MISSING")
+            all_ok = False
+    
+    return all_ok
+
+def check_git():
+    print_header("7. Git Repository")
+    try:
+        result = subprocess.run(['git', 'status'], 
+                              capture_output=True, text=True)
+        if result.returncode == 0:
+            print("✅ Git repository initialized")
+            
+            # Check for commits
+            result = subprocess.run(['git', 'log', '--oneline', '-1'],
+                                  capture_output=True, text=True)
+            if result.returncode == 0:
+                print(f"✅ Latest commit: {result.stdout.strip()}")
+            return True
+        else:
+            print("❌ Not a git repository")
+            return False
+    except FileNotFoundError:
+        print("❌ Git not installed")
+        return False
+
+def main():
+    print("╔" + "="*68 + "╗")
+    print("║" + " "*10 + "MARINE BIODIVERSITY PROJECT - INSTALLATION VERIFICATION" + " "*1 + "║")
+    print("╚" + "="*68 + "╝")
+    
+    checks = [
+        ("Python 3.11+", check_python),
+        ("CUDA Toolkit", check_cuda),
+        ("PyTorch + CUDA", check_pytorch),
+        ("Dependencies", check_dependencies),
+        ("YOLOv8 Inference", test_yolo_inference),
+        ("Project Structure", check_directory_structure),
+        ("Git Repository", check_git),
+    ]
+    
+    results = {}
+    for name, check_func in checks:
+        try:
+            results[name] = check_func()
+        except Exception as e:
+            print(f"❌ {name} check failed with error: {e}")
+            results[name] = False
+    
+    # Summary
+    print_header("VERIFICATION SUMMARY")
+    passed = sum(results.values())
+    total = len(results)
+    
+    for name, status in results.items():
+        status_icon = "✅" if status else "❌"
+        print(f"{status_icon} {name}")
+    
+    print(f"\n{'='*70}")
+    print(f"  PASSED: {passed}/{total} checks")
+    print(f"{'='*70}\n")
+    
+    if passed == total:
+        print("🎉 All checks passed! Environment is ready for Phase 1B.")
+        print("\nNext Steps:")
+        print("  1. Review Phase 1B guide: docs/PHASE1B_DATASET_COLLECTION.txt")
+        print("  2. Start collecting datasets from Roboflow, Kaggle, etc.")
+        print("  3. Document your progress in docs/PHASE1_PROGRESS.md")
+        return 0
+    else:
+        print("⚠️ Some checks failed. Please fix the issues above.")
+        print("\nTroubleshooting:")
+        print("  - Check CUDA installation: nvcc --version")
+        print("  - Reinstall PyTorch: pip install torch==2.0.1+cu118")
+        print("  - Verify GPU: nvidia-smi")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())
+EOF
+
+Make executable and run:
+
+(marine_venv) $ chmod +x scripts/verify_installation.py
+(marine_venv) $ python scripts/verify_installation.py
+
+Expected output:
+╔════════════════════════════════════════════════════════════════════╗
+║          MARINE BIODIVERSITY PROJECT - INSTALLATION VERIFICATION   ║
+╚════════════════════════════════════════════════════════════════════╝
+
+======================================================================
+  1. Python Version Check
+======================================================================
+
+Python Version: 3.11.7
+✅ Python 3.11+ detected
+
+======================================================================
+  2. CUDA Availability
+======================================================================
+
+nvcc: NVIDIA (R) Cuda compiler driver
+Cuda compilation tools, release 11.8, V11.8.89
+✅ CUDA compiler found
+
+... [continuing checks] ...
+
+======================================================================
+  VERIFICATION SUMMARY
+======================================================================
+
+✅ Python 3.11+
+✅ CUDA Toolkit
+✅ PyTorch + CUDA
+✅ Dependencies
+✅ YOLOv8 Inference
+✅ Project Structure
+✅ Git Repository
+
+======================================================================
+  PASSED: 7/7 checks
+======================================================================
+
+🎉 All checks passed! Environment is ready for Phase 1B.
+
+Next Steps:
+  1. Review Phase 1B guide: docs/PHASE1B_DATASET_COLLECTION.txt
+  2. Start collecting datasets from Roboflow, Kaggle, etc.
+  3. Document your progress in docs/PHASE1_PROGRESS.md
+
+═══════════════════════════════════════════════════════════════════════════
+📝 STEP 9: DOCUMENTATION & FINAL CHECKLIST
+═══════════════════════════════════════════════════════════════════════════
+
+CREATE PHASE 1A COMPLETION REPORT:
+----------------------------------
+
+(marine_venv) $ cat > docs/PHASE1A_REPORT.txt << 'EOF'
+═══════════════════════════════════════════════════════════════════════════
+PHASE 1A COMPLETION REPORT
+═══════════════════════════════════════════════════════════════════════════
+
+Project: Marine Biodiversity Ecosystem Health Assessment
+Author: Shri Harsan M
+Phase: 1A - Environment Setup
+Date Completed: [FILL IN DATE]
+Duration: [FILL IN DAYS]
+
+HARDWARE CONFIGURATION:
+-----------------------
+GPU: [e.g., NVIDIA RTX 3050 6GB]
+CPU: [e.g., Intel i5-12450H]
+RAM: [e.g., 16GB DDR4]
+Storage: [e.g., 512GB NVMe SSD]
+OS: [e.g., Ubuntu 22.04 LTS]
+
+SOFTWARE VERSIONS:
+------------------
+Python: 3.11.x
+CUDA: 11.8
+PyTorch: 2.0.1+cu118
+Ultralytics: 8.0.196
+OpenCV: 4.8.1
+NumPy: 1.26.4
+
+VERIFICATION RESULTS:
+---------------------
+✅ Python 3.11+ installed and working
+✅ CUDA 11.8 toolkit installed
+✅ PyTorch 2.0 with CUDA support verified
+✅ GPU detected: [GPU name]
+✅ VRAM available: [XX.XX GB]
+✅ YOLOv8 inference test passed
+✅ All dependencies installed
+✅ Project structure created
+✅ Git repository initialized
+
+ISSUES ENCOUNTERED:
+-------------------
+[Document any issues and how they were resolved]
+Example:
+- Issue: CUDA not detected initially
+  Solution: Updated NVIDIA driver to 535.xx
+
+NEXT PHASE:
+-----------
+Phase 1B: Multi-Source Dataset Collection
+Expected start date: [FILL IN]
+Estimated duration: 1-2 weeks
+
+NOTES:
+------
+[Any additional observations or recommendations]
+
+═══════════════════════════════════════════════════════════════════════════
+EOF
+
+FINAL CHECKLIST:
+----------------
+
+Complete this checklist before proceeding to Phase 1B:
+
+□ Python 3.11+ installed and verified
+□ CUDA 11.8 toolkit installed
+□ PyTorch 2.0.1+cu118 installed
+□ torch.cuda.is_available() returns True
+□ GPU detected and VRAM confirmed (≥6GB)
+□ Ultralytics YOLOv8 installed
+□ All dependencies installed (OpenCV, NumPy, etc.)
+□ Project directory structure created
+□ Git repository initialized
+□ Initial commit made
+□ requirements.txt generated
+□ .gitignore configured
+□ README.md created
+□ Configuration files created (project_config.yaml)
+□ Verification script run successfully (7/7 checks passed)
+□ Documentation complete (PHASE1A_REPORT.txt)
+□ Virtual environment activated and working
+
+SIGN OFF:
+---------
+By checking all boxes above, I confirm that Phase 1A is complete and 
+the environment is ready for Phase 1B: Dataset Collection.
+
+Name: Shri Harsan M
+Date: [FILL IN]
+Signature: _______________________
+
+═══════════════════════════════════════════════════════════════════════════
+🎯 QUICK REFERENCE - COMMON COMMANDS
+═══════════════════════════════════════════════════════════════════════════
+
+ACTIVATE ENVIRONMENT:
+$ source ~/marine_venv/bin/activate
+
+CHECK GPU:
+$ nvidia-smi
+
+CHECK CUDA:
+$ nvcc --version
+
+PYTHON WITH GPU:
+(marine_venv) $ python -c "import torch; print(torch.cuda.is_available())"
+
+RUN YOLO INFERENCE:
+(marine_venv) $ yolo predict model=yolov8s.pt source=image.jpg
+
+GIT WORKFLOW:
+(marine_venv) $ git status
+(marine_venv) $ git add .
+(marine_venv) $ git commit -m "Description"
+(marine_venv) $ git push origin main
+
+VERIFY INSTALLATION:
+(marine_venv) $ python scripts/verify_installation.py
+
+═══════════════════════════════════════════════════════════════════════════
+❓ TROUBLESHOOTING GUIDE
+═══════════════════════════════════════════════════════════════════════════
+
+PROBLEM: torch.cuda.is_available() returns False
+SOLUTION:
+  1. Check NVIDIA driver: nvidia-smi
+  2. Check CUDA: nvcc --version
+  3. Reinstall PyTorch:
+     pip uninstall torch torchvision torchaudio
+     pip install torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cu118
+
+PROBLEM: RuntimeError: CUDA out of memory
+SOLUTION:
+  - This is normal during training, not installation
+  - Reduce batch size in config (16 → 8)
+  - Close other GPU applications
+
+PROBLEM: ModuleNotFoundError: No module named 'ultralytics'
+SOLUTION:
+  1. Ensure virtual environment is activated
+  2. Reinstall: pip install ultralytics==8.0.196
+
+PROBLEM: Git push fails with authentication error
+SOLUTION:
+  1. Use Personal Access Token instead of password
+  2. Generate at: github.com/settings/tokens
+  3. Use HTTPS: git remote set-url origin https://USERNAME:TOKEN@github.com/...
+
+PROBLEM: YOLOv8 download is slow
+SOLUTION:
+  - Use mirror: export HF_ENDPOINT=https://hf-mirror.com
+  - Or download manually from GitHub releases
+
+═══════════════════════════════════════════════════════════════════════════
+📚 ADDITIONAL RESOURCES
+═══════════════════════════════════════════════════════════════════════════
+
+OFFICIAL DOCUMENTATION:
+- PyTorch: https://pytorch.org/docs/stable/index.html
+- Ultralytics YOLOv8: https://docs.ultralytics.com/
+- CUDA Toolkit: https://docs.nvidia.com/cuda/
+
+COMMUNITY FORUMS:
+- PyTorch Forums: https://discuss.pytorch.org/
+- Ultralytics Discord: https://ultralytics.com/discord
+- Stack Overflow: https://stackoverflow.com/questions/tagged/pytorch
+
+TUTORIALS:
+- PyTorch Tutorials: https://pytorch.org/tutorials/
+- YOLOv8 Training Guide: https://docs.ultralytics.com/modes/train/
+- CUDA Programming: https://developer.nvidia.com/cuda-education
+
+═══════════════════════════════════════════════════════════════════════════
+✅ PHASE 1A COMPLETE - READY FOR PHASE 1B!
+═══════════════════════════════════════════════════════════════════════════
+
+Congratulations! Your development environment is fully configured.
+
+Next Phase: PHASE 1B - Multi-Source Dataset Collection
+Expected Duration: 1-2 weeks
+Objective: Collect and organize 5,956+ images from 4+ data sources
+
+Proceed to: docs/PHASE1B_DATASET_COLLECTION.txt
+
+═══════════════════════════════════════════════════════════════════════════

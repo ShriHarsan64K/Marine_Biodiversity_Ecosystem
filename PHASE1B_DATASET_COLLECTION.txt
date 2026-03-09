@@ -1,0 +1,869 @@
+═══════════════════════════════════════════════════════════════════════════
+PHASE 1B: MULTI-SOURCE DATASET COLLECTION - COMPLETE GUIDE
+═══════════════════════════════════════════════════════════════════════════
+
+Project: Marine Biodiversity Ecosystem Health Assessment
+Author: Shri Harsan M | M.Tech Data Science | SRM Institute
+Phase: 1B - Multi-Source Dataset Collection
+Duration: Week 1-2 (7-14 days)
+Prerequisites: Phase 1A completed ✅
+
+═══════════════════════════════════════════════════════════════════════════
+📋 PHASE 1B OBJECTIVES
+═══════════════════════════════════════════════════════════════════════════
+
+✅ Collect 5,956+ raw images from 4+ diverse sources
+✅ Ensure geographic diversity (Atlantic, Pacific, Indian Ocean, Red Sea)
+✅ Validate data licenses (CC0, CC-BY, CC-BY-SA acceptable)
+✅ Map 199+ granular species → 8-11 indicator families
+✅ Organize data with proper metadata and provenance tracking
+✅ Target: Minimum 500 images per indicator class before augmentation
+
+═══════════════════════════════════════════════════════════════════════════
+🎯 TARGET INDICATOR SPECIES (8-11 FAMILIES)
+═══════════════════════════════════════════════════════════════════════════
+
+PRIMARY INDICATORS (Phase 1-5):
+-------------------------------
+1. Butterflyfish (Chaetodontidae) - Coral health proxy
+   Target: 600+ images
+   Species examples: Threadfin, Raccoon, Ornate, Copperband
+
+2. Grouper (Serranidae) - Apex predator / fishing pressure
+   Target: 600+ images
+   Species examples: Nassau, Goliath, Red, Tiger
+
+3. Parrotfish (Scaridae) - Algae control / bioerosion
+   Target: 650+ images
+   Species examples: Stoplight, Rainbow, Blue, Queen
+
+4. Surgeonfish (Acanthuridae) - Herbivore guild
+   Target: 600+ images
+   Species examples: Blue Tang, Yellow Tang, Sailfin, Powder Blue
+
+5. Damselfish (Pomacentridae) - Habitat complexity
+   Target: 700+ images
+   Species examples: Sergeant Major, Chromis, Clownfish
+
+6. Wrasse (Labridae) - Ecosystem services
+   Target: 550+ images
+   Species examples: Cleaner Wrasse, Humphead, Bird, Napoleon
+
+7. Triggerfish (Balistidae) - Degradation sensitivity
+   Target: 550+ images
+   Species examples: Picasso, Clown, Titan, Queen
+
+8. Angelfish (Pomacanthidae) - Reef structure
+   Target: 500+ images
+   Species examples: Emperor, French, Queen, King
+
+OPTIONAL EXPANDED INDICATORS (Phase 6+):
+-----------------------------------------
+9. Sharks (Carcharhinidae, Sphyrnidae) - Pristine indicator
+   Target: 200+ images (rarer)
+   Species: Reef Shark, Blacktip, Whitetip
+
+10. Cleaner Wrasse (Labroides dimidiatus) - Mutualism function
+    Target: 150+ images
+    (Can be extracted from Wrasse family)
+
+11. Lionfish (Pterois) - Invasive species alert
+    Target: 200+ images
+    (For Indo-Pacific regions)
+
+TOTAL TARGET: 5,956+ images raw (before augmentation)
+
+═══════════════════════════════════════════════════════════════════════════
+📂 DATA SOURCE 1: ROBOFLOW UNIVERSE
+═══════════════════════════════════════════════════════════════════════════
+
+WHY ROBOFLOW?
+- Pre-annotated bounding boxes (YOLO format)
+- Diverse underwater datasets
+- Free academic use
+- Easy download API
+
+RECOMMENDED DATASETS:
+--------------------
+
+1. "Underwater Fish Detection" by Various Authors
+   URL: https://universe.roboflow.com/search?q=underwater+fish
+   
+   Steps:
+   a) Create free account at roboflow.com
+   b) Search: "underwater fish detection"
+   c) Filter by:
+      - Annotation type: Object Detection
+      - Min images: 500+
+      - License: Public Domain, CC-BY
+   
+   d) Select top 3-5 datasets with indicator species
+   
+   e) Download in YOLOv8 format:
+      - Click dataset → Export → YOLOv8 → Download ZIP
+   
+   f) Extract to dataset/raw/roboflow/
+
+2. Specific Recommended Datasets:
+   
+   a) "Fish Species Detection" (2000+ images)
+      - Contains: Grouper, Parrotfish, Surgeonfish
+      - Format: YOLOv8
+   
+   b) "Coral Reef Fish" (1500+ images)
+      - Contains: Butterflyfish, Angelfish, Damselfish
+      - Format: YOLOv8
+   
+   c) "Tropical Fish Dataset" (800+ images)
+      - Contains: Wrasse, Triggerfish
+      - Format: YOLOv8
+
+DOWNLOAD SCRIPT:
+----------------
+
+Create automated download script:
+
+$ cat > src/utils/download_roboflow.py << 'EOF'
+#!/usr/bin/env python3
+"""
+Download datasets from Roboflow Universe
+Requires: pip install roboflow
+"""
+
+from roboflow import Roboflow
+import os
+
+def download_roboflow_dataset(api_key, workspace, project, version=1):
+    """
+    Download dataset from Roboflow
+    
+    Args:
+        api_key: Your Roboflow API key
+        workspace: Workspace name
+        project: Project name
+        version: Dataset version
+    """
+    rf = Roboflow(api_key=api_key)
+    project = rf.workspace(workspace).project(project)
+    dataset = project.version(version).download("yolov8")
+    
+    return dataset.location
+
+if __name__ == "__main__":
+    # Get API key from: https://app.roboflow.com/settings/api
+    API_KEY = "YOUR_API_KEY_HERE"  # Replace with your key
+    
+    # Example datasets (replace with actual workspace/project names)
+    datasets = [
+        {"workspace": "fish-detection", "project": "underwater-fish", "version": 1},
+        {"workspace": "marine-bio", "project": "coral-reef-fish", "version": 2},
+    ]
+    
+    output_dir = "dataset/raw/roboflow"
+    os.makedirs(output_dir, exist_ok=True)
+    
+    for ds in datasets:
+        print(f"Downloading {ds['project']}...")
+        location = download_roboflow_dataset(
+            API_KEY, 
+            ds['workspace'], 
+            ds['project'], 
+            ds['version']
+        )
+        print(f"  → Saved to: {location}")
+EOF
+
+MANUAL DOWNLOAD INSTRUCTIONS:
+-----------------------------
+
+If API doesn't work, manual download:
+
+1. Visit: https://universe.roboflow.com/
+2. Search: "underwater fish detection"
+3. Select dataset
+4. Click "Download Dataset"
+5. Choose format: YOLOv8
+6. Download ZIP
+7. Extract to: dataset/raw/roboflow/[dataset-name]/
+
+Expected structure:
+dataset/raw/roboflow/
+├── fish-species-detection/
+│   ├── train/
+│   │   ├── images/
+│   │   └── labels/
+│   ├── valid/
+│   └── data.yaml
+└── coral-reef-fish/
+    ├── train/
+    ├── valid/
+    └── data.yaml
+
+═══════════════════════════════════════════════════════════════════════════
+📂 DATA SOURCE 2: KAGGLE DATASETS
+═══════════════════════════════════════════════════════════════════════════
+
+WHY KAGGLE?
+- Large-scale datasets
+- Research-friendly licenses
+- Easy API download
+- High-quality images
+
+RECOMMENDED DATASETS:
+--------------------
+
+1. "A Large Scale Fish Dataset"
+   URL: https://www.kaggle.com/datasets/crowww/a-large-scale-fish-dataset
+   Size: 9,000 images
+   License: CC0 (Public Domain)
+   Contains: Multiple fish species including some indicators
+   
+   Download:
+   $ kaggle datasets download -d crowww/a-large-scale-fish-dataset
+   $ unzip a-large-scale-fish-dataset.zip -d dataset/raw/kaggle/fish-dataset/
+
+2. "Fish Species Image Data"
+   URL: https://www.kaggle.com/datasets/markdaniellampa/fish-dataset
+   Size: 2,000+ images
+   License: CC-BY-SA 4.0
+   Contains: Grouper, Parrotfish, Surgeonfish
+   
+   Download:
+   $ kaggle datasets download -d markdaniellampa/fish-dataset
+
+3. "Underwater Trash Dataset" (for negative samples)
+   URL: https://www.kaggle.com/datasets/sdhayalk/trash-detection-dataset
+   Contains: Underwater scenes without fish (useful for hard negatives)
+
+SETUP KAGGLE API:
+-----------------
+
+1. Create Kaggle account: kaggle.com/account/login
+
+2. Get API credentials:
+   - Go to: https://www.kaggle.com/settings
+   - Scroll to "API" section
+   - Click "Create New API Token"
+   - Downloads: kaggle.json
+
+3. Install Kaggle API:
+   $ pip install kaggle
+
+4. Configure credentials:
+   $ mkdir -p ~/.kaggle
+   $ cp ~/Downloads/kaggle.json ~/.kaggle/
+   $ chmod 600 ~/.kaggle/kaggle.json
+
+5. Verify:
+   $ kaggle datasets list -s fish
+
+DOWNLOAD SCRIPT:
+----------------
+
+$ cat > src/utils/download_kaggle.py << 'EOF'
+#!/usr/bin/env python3
+"""
+Download datasets from Kaggle
+"""
+
+import os
+import subprocess
+
+def download_kaggle_dataset(dataset_slug, output_dir):
+    """
+    Download Kaggle dataset
+    
+    Args:
+        dataset_slug: Dataset identifier (e.g., 'crowww/a-large-scale-fish-dataset')
+        output_dir: Where to extract
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    
+    cmd = f"kaggle datasets download -d {dataset_slug} -p {output_dir} --unzip"
+    subprocess.run(cmd, shell=True, check=True)
+    
+    print(f"✅ Downloaded {dataset_slug} to {output_dir}")
+
+if __name__ == "__main__":
+    datasets = [
+        ("crowww/a-large-scale-fish-dataset", "dataset/raw/kaggle/fish-dataset"),
+        ("markdaniellampa/fish-dataset", "dataset/raw/kaggle/fish-species"),
+    ]
+    
+    for slug, output in datasets:
+        print(f"Downloading {slug}...")
+        download_kaggle_dataset(slug, output)
+EOF
+
+═══════════════════════════════════════════════════════════════════════════
+📂 DATA SOURCE 3: LILA BC (LABELED INFORMATION LIBRARY)
+═══════════════════════════════════════════════════════════════════════════
+
+WHY LILA BC?
+- Scientific-grade annotations
+- Biodiversity focus
+- Archival quality
+- Free for research
+
+URL: https://lila.science/datasets
+
+RELEVANT DATASETS:
+------------------
+
+1. "Marine Species Imagery"
+   - Underwater camera trap images
+   - Contains various reef fish
+   - COCO format annotations
+
+2. "Coral Reef Monitoring Project"
+   - Time-series reef images
+   - Multiple species labeled
+   - Geographic metadata
+
+DOWNLOAD:
+---------
+
+1. Visit: https://lila.science/datasets
+2. Search: "marine" or "fish"
+3. Download COCO JSON + images
+4. Convert to YOLO format (script provided in Phase 1C)
+
+Example:
+$ wget https://lila.science/datasets/marine-species/images.zip
+$ wget https://lila.science/datasets/marine-species/annotations.json
+$ unzip images.zip -d dataset/raw/lila/marine-species/
+
+═══════════════════════════════════════════════════════════════════════════
+📂 DATA SOURCE 4: CUSTOM WEB SCRAPING (ADVANCED)
+═══════════════════════════════════════════════════════════════════════════
+
+WHY CUSTOM SCRAPING?
+- Fill gaps in specific indicator species
+- Get region-specific data (Red Sea, Maldives, etc.)
+- Control quality and diversity
+
+SOURCES:
+--------
+
+1. iNaturalist (Community science platform)
+   URL: https://www.inaturalist.org/
+   License: CC-BY, CC-BY-NC (check per image)
+   
+   Search strategy:
+   - Search: "Chaetodontidae Red Sea"
+   - Filter: Research Grade observations
+   - Download images with coordinates
+
+2. Fishbase (Scientific database)
+   URL: https://www.fishbase.org/
+   License: Academic use allowed
+   Contains: Species photos with taxonomy
+
+3. Flickr (Creative Commons search)
+   URL: https://www.flickr.com/search/
+   Filter: Commercial use allowed
+   Search: "butterflyfish underwater"
+
+WEB SCRAPING SCRIPT (iNaturalist Example):
+------------------------------------------
+
+⚠️ IMPORTANT: Respect robots.txt and rate limits!
+
+$ cat > src/utils/scrape_inaturalist.py << 'EOF'
+#!/usr/bin/env python3
+"""
+Download images from iNaturalist API
+Respects rate limits and attribution
+"""
+
+import requests
+import time
+import os
+from pathlib import Path
+
+def search_inaturalist(taxon_name, max_results=100):
+    """
+    Search iNaturalist for species observations
+    
+    Args:
+        taxon_name: Scientific name (e.g., "Chaetodontidae")
+        max_results: Max images to download
+    """
+    base_url = "https://api.inaturalist.org/v1/observations"
+    
+    params = {
+        "taxon_name": taxon_name,
+        "quality_grade": "research",  # Only verified observations
+        "photos": "true",
+        "per_page": 200,
+        "license": "cc-by,cc-by-nc,cc0",  # Open licenses only
+    }
+    
+    response = requests.get(base_url, params=params)
+    data = response.json()
+    
+    observations = data.get("results", [])
+    print(f"Found {len(observations)} observations for {taxon_name}")
+    
+    return observations
+
+def download_images(observations, output_dir, max_downloads=100):
+    """Download images from observations"""
+    os.makedirs(output_dir, exist_ok=True)
+    
+    downloaded = 0
+    for obs in observations[:max_downloads]:
+        if downloaded >= max_downloads:
+            break
+        
+        obs_id = obs["id"]
+        photos = obs.get("photos", [])
+        
+        if not photos:
+            continue
+        
+        # Download first photo
+        photo_url = photos[0]["url"].replace("square", "original")
+        
+        try:
+            response = requests.get(photo_url, timeout=10)
+            if response.status_code == 200:
+                filename = f"{output_dir}/{taxon_name}_{obs_id}.jpg"
+                with open(filename, 'wb') as f:
+                    f.write(response.content)
+                downloaded += 1
+                print(f"  Downloaded: {filename}")
+                
+                # Rate limiting
+                time.sleep(1)  # 1 request per second
+        except Exception as e:
+            print(f"  Error downloading {photo_url}: {e}")
+    
+    print(f"✅ Downloaded {downloaded} images")
+
+if __name__ == "__main__":
+    species_list = [
+        "Chaetodontidae",    # Butterflyfish
+        "Scaridae",          # Parrotfish
+        "Acanthuridae",      # Surgeonfish
+        "Serranidae",        # Grouper
+    ]
+    
+    for species in species_list:
+        print(f"\nSearching for {species}...")
+        obs = search_inaturalist(species, max_results=200)
+        download_images(obs, f"dataset/raw/inaturalist/{species}", max_downloads=100)
+        time.sleep(5)  # Cool-down between species
+EOF
+
+LEGAL CONSIDERATIONS:
+--------------------
+
+✅ ALWAYS:
+- Check image licenses (CC0, CC-BY, CC-BY-SA acceptable)
+- Attribute photographers when required
+- Respect robots.txt
+- Rate limit requests (1 req/sec max)
+- Store attribution metadata
+
+❌ NEVER:
+- Download from sites with "All Rights Reserved"
+- Ignore robots.txt or rate limits
+- Remove watermarks
+- Use images without proper licenses
+
+═══════════════════════════════════════════════════════════════════════════
+📊 SPECIES TAXONOMY MAPPING
+═══════════════════════════════════════════════════════════════════════════
+
+OBJECTIVE: Map 199+ granular species → 8-11 indicator families
+
+MAPPING STRATEGY:
+-----------------
+
+Create mapping file:
+
+$ cat > configs/species_mapping.yaml << 'EOF'
+# Species to Indicator Family Mapping
+# Maps granular species labels to indicator families
+
+indicator_families:
+  
+  butterflyfish:
+    family: Chaetodontidae
+    species:
+      - Threadfin Butterflyfish
+      - Raccoon Butterflyfish
+      - Ornate Butterflyfish
+      - Copperband Butterflyfish
+      - Lined Butterflyfish
+      - Saddleback Butterflyfish
+      - Longnose Butterflyfish
+      - Chevron Butterflyfish
+      # Add all Chaetodontidae species found in datasets
+  
+  grouper:
+    family: Serranidae
+    species:
+      - Nassau Grouper
+      - Goliath Grouper
+      - Red Grouper
+      - Tiger Grouper
+      - Black Grouper
+      - Gag Grouper
+      - Coral Grouper
+      - Giant Grouper
+      # All Epinephelus, Mycteroperca species
+  
+  parrotfish:
+    family: Scaridae
+    species:
+      - Stoplight Parrotfish
+      - Rainbow Parrotfish
+      - Blue Parrotfish
+      - Queen Parrotfish
+      - Princess Parrotfish
+      - Redband Parrotfish
+      - Midnight Parrotfish
+      # All Scarus, Sparisoma species
+  
+  surgeonfish:
+    family: Acanthuridae
+    species:
+      - Blue Tang
+      - Yellow Tang
+      - Sailfin Tang
+      - Powder Blue Tang
+      - Achilles Tang
+      - Clown Surgeonfish
+      - Orangespot Surgeonfish
+      # All Acanthurus, Zebrasoma species
+  
+  damselfish:
+    family: Pomacentridae
+    species:
+      - Sergeant Major
+      - Blue Chromis
+      - Clownfish
+      - Three Spot Damselfish
+      - Yellowtail Damselfish
+      - Dusky Damselfish
+      - Beaugregory
+      # All Chromis, Amphiprion, Stegastes species
+  
+  wrasse:
+    family: Labridae
+    species:
+      - Cleaner Wrasse
+      - Humphead Wrasse
+      - Bird Wrasse
+      - Napoleon Wrasse
+      - Rainbow Wrasse
+      - Moon Wrasse
+      - Checkerboard Wrasse
+      # All Labroides, Thalassoma, Coris species
+  
+  triggerfish:
+    family: Balistidae
+    species:
+      - Picasso Triggerfish
+      - Clown Triggerfish
+      - Titan Triggerfish
+      - Queen Triggerfish
+      - Black Triggerfish
+      - Orangeline Triggerfish
+      # All Rhinecanthus, Balistoides species
+  
+  angelfish:
+    family: Pomacanthidae
+    species:
+      - Emperor Angelfish
+      - French Angelfish
+      - Queen Angelfish
+      - King Angelfish
+      - Blue Angelfish
+      - Gray Angelfish
+      - Regal Angelfish
+      # All Pomacanthus, Holacanthus species
+
+# Expanded indicators (Phase 6+)
+  shark:
+    order: Carcharhiniformes
+    species:
+      - Reef Shark
+      - Blacktip Reef Shark
+      - Whitetip Reef Shark
+      - Grey Reef Shark
+  
+  lionfish:
+    genus: Pterois
+    species:
+      - Red Lionfish
+      - Common Lionfish
+EOF
+
+MAPPING SCRIPT:
+---------------
+
+$ cat > src/utils/map_species.py << 'EOF'
+#!/usr/bin/env python3
+"""
+Map granular species labels to indicator families
+"""
+
+import yaml
+import pandas as pd
+from pathlib import Path
+
+def load_mapping(config_path="configs/species_mapping.yaml"):
+    """Load species to family mapping"""
+    with open(config_path) as f:
+        mapping = yaml.safe_load(f)
+    return mapping['indicator_families']
+
+def create_reverse_mapping(mapping):
+    """
+    Create species -> family lookup
+    
+    Returns:
+        dict: {species_name: family_name}
+    """
+    reverse = {}
+    for family, data in mapping.items():
+        for species in data['species']:
+            # Normalize species name
+            species_norm = species.lower().strip()
+            reverse[species_norm] = family
+    return reverse
+
+def map_dataset_labels(dataset_dir, mapping):
+    """
+    Map dataset labels to indicator families
+    
+    Args:
+        dataset_dir: Path to dataset with labels
+        mapping: Species -> family mapping dict
+    """
+    # Example: Read YOLO labels and update class names
+    # Implementation depends on dataset format
+    pass
+
+if __name__ == "__main__":
+    mapping = load_mapping()
+    reverse_map = create_reverse_mapping(mapping)
+    
+    print("Species Mapping Loaded:")
+    print(f"  Total families: {len(mapping)}")
+    print(f"  Total species mapped: {len(reverse_map)}")
+    
+    # Example lookup
+    test_species = "blue tang"
+    family = reverse_map.get(test_species)
+    print(f"\nExample: '{test_species}' → '{family}'")
+EOF
+
+═══════════════════════════════════════════════════════════════════════════
+📋 DATA COLLECTION CHECKLIST
+═══════════════════════════════════════════════════════════════════════════
+
+□ Roboflow datasets downloaded (3+ datasets, 2000+ images)
+□ Kaggle datasets downloaded (2+ datasets, 2000+ images)
+□ LILA BC dataset downloaded (1+ dataset, 500+ images)
+□ Custom scraping completed (optional, 500+ images)
+□ All images extracted to dataset/raw/[source]/
+□ Species mapping YAML created
+□ License compliance verified (all CC0, CC-BY, CC-BY-SA)
+□ Geographic diversity confirmed (3+ ocean regions)
+□ Total images: 5,956+ ✅
+□ Metadata files created (data.yaml per source)
+□ Attribution.txt created with photographer credits
+
+EXPECTED DIRECTORY STRUCTURE:
+-----------------------------
+
+dataset/raw/
+├── roboflow/
+│   ├── fish-species-detection/
+│   │   ├── train/images/
+│   │   ├── train/labels/
+│   │   ├── valid/images/
+│   │   ├── valid/labels/
+│   │   └── data.yaml
+│   └── coral-reef-fish/
+│       └── ...
+├── kaggle/
+│   ├── fish-dataset/
+│   │   ├── Grouper/
+│   │   ├── Parrotfish/
+│   │   └── ...
+│   └── fish-species/
+│       └── ...
+├── lila/
+│   └── marine-species/
+│       ├── images/
+│       └── annotations.json
+├── inaturalist/
+│   ├── Chaetodontidae/
+│   ├── Scaridae/
+│   └── ...
+├── ATTRIBUTION.txt  # Photographer credits
+└── README.md        # Dataset provenance
+
+═══════════════════════════════════════════════════════════════════════════
+📝 DOCUMENTATION REQUIREMENTS
+═══════════════════════════════════════════════════════════════════════════
+
+CREATE DATASET METADATA:
+-----------------------
+
+$ cat > dataset/raw/DATASET_METADATA.json << 'EOF'
+{
+  "project": "Marine Biodiversity Ecosystem Health Assessment",
+  "author": "Shri Harsan M",
+  "date_collected": "2024-XX-XX",
+  "total_images": 5956,
+  "sources": [
+    {
+      "name": "Roboflow - Fish Species Detection",
+      "url": "https://universe.roboflow.com/...",
+      "images": 2000,
+      "license": "CC-BY 4.0",
+      "geographic_region": "Global"
+    },
+    {
+      "name": "Kaggle - Large Scale Fish Dataset",
+      "url": "https://www.kaggle.com/datasets/crowww/...",
+      "images": 2500,
+      "license": "CC0",
+      "geographic_region": "Indo-Pacific, Atlantic"
+    },
+    {
+      "name": "LILA BC - Marine Species",
+      "url": "https://lila.science/datasets/...",
+      "images": 800,
+      "license": "CC-BY-NC 4.0",
+      "geographic_region": "Caribbean, Red Sea"
+    },
+    {
+      "name": "iNaturalist Custom Scrape",
+      "url": "https://www.inaturalist.org/",
+      "images": 656,
+      "license": "CC-BY, CC-BY-NC",
+      "geographic_region": "Multi-regional"
+    }
+  ],
+  "indicator_families": {
+    "butterflyfish": 600,
+    "grouper": 650,
+    "parrotfish": 700,
+    "surgeonfish": 620,
+    "damselfish": 750,
+    "wrasse": 580,
+    "triggerfish": 560,
+    "angelfish": 496
+  },
+  "geographic_coverage": [
+    "Atlantic Ocean",
+    "Pacific Ocean",
+    "Indian Ocean",
+    "Red Sea",
+    "Caribbean Sea",
+    "Great Barrier Reef"
+  ],
+  "depth_range": "0-30m",
+  "image_quality": {
+    "min_resolution": "480x480",
+    "formats": ["jpg", "png"],
+    "avg_file_size_mb": 1.2
+  }
+}
+EOF
+
+CREATE ATTRIBUTION FILE:
+-----------------------
+
+$ cat > dataset/raw/ATTRIBUTION.txt << 'EOF'
+═══════════════════════════════════════════════════════════════════════════
+DATASET ATTRIBUTION & LICENSES
+═══════════════════════════════════════════════════════════════════════════
+
+This dataset is a compilation from multiple sources for academic research.
+All images comply with Creative Commons licenses (CC0, CC-BY, CC-BY-SA).
+
+SOURCES:
+--------
+
+1. Roboflow Universe - Fish Species Detection
+   License: CC-BY 4.0
+   Attribution: Various contributors via Roboflow
+   URL: https://universe.roboflow.com/
+
+2. Kaggle - A Large Scale Fish Dataset
+   Author: crowww
+   License: CC0 (Public Domain)
+   URL: https://www.kaggle.com/datasets/crowww/a-large-scale-fish-dataset
+
+3. LILA BC - Marine Species Imagery
+   License: CC-BY-NC 4.0
+   Attribution: LILA BC Contributors
+   URL: https://lila.science/
+
+4. iNaturalist Observations
+   License: Mixed (CC-BY, CC-BY-NC per image)
+   Attribution: Individual photographers (see metadata)
+   URL: https://www.inaturalist.org/
+
+USAGE TERMS:
+-----------
+- Academic and research use permitted
+- Commercial use: Check individual licenses (most are CC-BY, allowed)
+- Attribution required when publishing results
+- Share-alike provisions apply to derived datasets
+
+CITATION:
+---------
+If you use this dataset in research, please cite:
+
+Harsan, S. M. (2024). Marine Biodiversity Indicator Species Dataset. 
+SRM Institute. Available at: [GitHub URL]
+
+═══════════════════════════════════════════════════════════════════════════
+EOF
+
+═══════════════════════════════════════════════════════════════════════════
+🎯 PHASE 1B COMPLETION CRITERIA
+═══════════════════════════════════════════════════════════════════════════
+
+QUANTITATIVE:
+------------
+✅ Total images: ≥5,956
+✅ Minimum per class: ≥500 images
+✅ Geographic regions: ≥3 ocean basins
+✅ Image resolution: ≥480x480 pixels
+✅ Valid annotations: ≥95% of images
+
+QUALITATIVE:
+-----------
+✅ License compliance: 100% open licenses
+✅ Diversity: Day/dawn/dusk lighting, clear/turbid water
+✅ Species mapping: 199+ species → 8-11 families
+✅ Metadata: Complete provenance documentation
+✅ Attribution: All photographers credited
+
+═══════════════════════════════════════════════════════════════════════════
+📝 NEXT PHASE
+═══════════════════════════════════════════════════════════════════════════
+
+Phase 1C: Data Cleaning & Quality Control (Week 2)
+Objectives:
+- Remove duplicates using perceptual hashing
+- Filter low-quality images (blur detection)
+- Validate annotations (bounding box sanity checks)
+- Verify species taxonomy
+- License compliance audit
+
+Proceed to: docs/PHASE1C_DATA_CLEANING.txt
+
+═══════════════════════════════════════════════════════════════════════════
+✅ PHASE 1B COMPLETE!
+═══════════════════════════════════════════════════════════════════════════

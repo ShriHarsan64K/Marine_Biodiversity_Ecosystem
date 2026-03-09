@@ -1,0 +1,137 @@
+# Species -> Indicator Family Mapping
+# Maps granular dataset labels to 8 standardised indicator families.
+# Add / edit species names here as you discover new dataset labels.
+
+indicator_families:
+  butterflyfish:
+    class_id: 0
+    family: Chaetodontidae
+    ecological_role: Coral health proxy (obligate corallivores)
+    species:
+      - Threadfin Butterflyfish
+      - Raccoon Butterflyfish
+      - Ornate Butterflyfish
+      - Copperband Butterflyfish
+      - Teardrop Butterflyfish
+      - Saddled Butterflyfish
+      - Longnose Butterflyfish
+      - Redfin Butterflyfish
+      - Spotfin Butterflyfish
+      - Foureye Butterflyfish
+      - Banded Butterflyfish
+      - Reef Butterflyfish
+
+  grouper:
+    class_id: 1
+    family: Serranidae
+    ecological_role: Apex predator / fishing pressure indicator
+    species:
+      - Nassau Grouper
+      - Goliath Grouper
+      - Red Grouper
+      - Tiger Grouper
+      - Black Grouper
+      - Yellowfin Grouper
+      - Gag Grouper
+      - Coney Grouper
+      - Coral Grouper
+      - Peacock Grouper
+      - Potato Grouper
+      - Leopard Coral Grouper
+
+  parrotfish:
+    class_id: 2
+    family: Scaridae
+    ecological_role: Algae control / bioerosion balance
+    species:
+      - Stoplight Parrotfish
+      - Rainbow Parrotfish
+      - Blue Parrotfish
+      - Queen Parrotfish
+      - Midnight Parrotfish
+      - Princess Parrotfish
+      - Striped Parrotfish
+      - Redband Parrotfish
+      - Bumphead Parrotfish
+      - Bicolor Parrotfish
+
+  surgeonfish:
+    class_id: 3
+    family: Acanthuridae
+    ecological_role: Herbivore guild / reef balance
+    species:
+      - Blue Tang
+      - Yellow Tang
+      - Sailfin Tang
+      - Powder Blue Tang
+      - Convict Tang
+      - Naso Tang
+      - Clown Tang
+      - Bluespine Unicornfish
+      - Brown Surgeonfish
+      - Whitecheek Surgeonfish
+      - Orangeband Surgeonfish
+
+  damselfish:
+    class_id: 4
+    family: Pomacentridae
+    ecological_role: Habitat complexity indicator
+    species:
+      - Sergeant Major
+      - Blue Chromis
+      - Green Chromis
+      - Clownfish
+      - Ocellaris Clownfish
+      - Percula Clownfish
+      - Threespot Damselfish
+      - Bicolor Damselfish
+      - Yellowtail Damselfish
+      - Beau Gregory
+
+  wrasse:
+    class_id: 5
+    family: Labridae
+    ecological_role: Ecosystem services / cleaning stations
+    species:
+      - Cleaner Wrasse
+      - Humphead Wrasse
+      - Bird Wrasse
+      - Napoleon Wrasse
+      - Bluehead Wrasse
+      - Yellowhead Wrasse
+      - Creole Wrasse
+      - Slippery Dick
+      - Puddingwife Wrasse
+      - Spanish Hogfish
+
+  triggerfish:
+    class_id: 6
+    family: Balistidae
+    ecological_role: Degradation sensitivity indicator
+    species:
+      - Picasso Triggerfish
+      - Clown Triggerfish
+      - Titan Triggerfish
+      - Queen Triggerfish
+      - Undulate Triggerfish
+      - Blue Triggerfish
+      - Redtooth Triggerfish
+      - Crosshatch Triggerfish
+      - Bridled Triggerfish
+      - Black Triggerfish
+
+  angelfish:
+    class_id: 7
+    family: Pomacanthidae
+    ecological_role: Reef structure indicator
+    species:
+      - Emperor Angelfish
+      - French Angelfish
+      - Queen Angelfish
+      - King Angelfish
+      - Gray Angelfish
+      - Rock Beauty
+      - Passer Angelfish
+      - Koran Angelfish
+      - Blue-ringed Angelfish
+      - Regal Angelfish
