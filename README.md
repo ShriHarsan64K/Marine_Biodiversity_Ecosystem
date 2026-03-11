@@ -5,8 +5,6 @@
 [![Python](https://img.shields.io/badge/Python-3.11.2-blue?logo=python)](https://www.python.org/)
 [![YOLOv8](https://img.shields.io/badge/YOLOv8s-Ultralytics-purple)](https://github.com/ultralytics/ultralytics)
 [![mAP](https://img.shields.io/badge/mAP@0.5-95.1%25-brightgreen)](results/detection/)
-[![FPS](https://img.shields.io/badge/FPS-59.3-orange)](results/detection/)
-[![MHI](https://img.shields.io/badge/MHI-70.59%2F100-teal)](results/biodiversity_health/)
 [![GPU](https://img.shields.io/badge/GPU-RTX%203050%206GB-green)](https://www.nvidia.com/)
 [![Institute](https://img.shields.io/badge/SRM%20Institute-M.Tech%20Data%20Science-red)](https://www.srmist.edu.in/)
 
@@ -252,4 +250,4 @@ This project is submitted as an M.Tech research thesis. Code is available for ac
 
 ---
 
-*Marine Biodiversity Ecosystem Assessment · SRM Institute · 2025*
+*Marine Biodiversity Ecosystem Assessment · SRM Institute · 2026*
