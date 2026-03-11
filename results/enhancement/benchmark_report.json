@@ -1,0 +1,176 @@
+{
+  "n_images": 20,
+  "ssim_mean": 0.847,
+  "ssim_std": 0.0829,
+  "ssim_target": 0.8,
+  "ssim_pass": true,
+  "psnr_mean_db": 17.7,
+  "psnr_std_db": 1.89,
+  "psnr_target_db": 15.0,
+  "psnr_pass": true,
+  "uciqe_orig_mean": 0.3619,
+  "uciqe_enh_mean": 0.384,
+  "uciqe_improved": true,
+  "per_image": [
+    {
+      "file": "butterflyfish_train_original_jpg.rf.590b32fdbbc73c77ff483f7ae6eea666.jpg",
+      "ssim": 0.9451,
+      "psnr_db": 20.88,
+      "uciqe_orig": 0.338,
+      "uciqe_enh": 0.3582,
+      "uciqe_delta": 0.0202
+    },
+    {
+      "file": "parrotfish_yolo_PARROTFISH2021_DATA0095PARROT.jpg",
+      "ssim": 0.712,
+      "psnr_db": 17.3,
+      "uciqe_orig": 0.2752,
+      "uciqe_enh": 0.3622,
+      "uciqe_delta": 0.087
+    },
+    {
+      "file": "butterflyfish_valid_Chaetodon_lunula_365583070_jpg.rf.53ce4b6a6ea4003b0e95257a06d92388.jpg",
+      "ssim": 0.8051,
+      "psnr_db": 15.96,
+      "uciqe_orig": 0.3909,
+      "uciqe_enh": 0.3935,
+      "uciqe_delta": 0.0026
+    },
+    {
+      "file": "butterflyfish_train_istockphoto-930206292-612x612_jpg.rf.9f506d27baabbe5dbf7532e8f0e669b9_aug0139.jpg",
+      "ssim": 0.6433,
+      "psnr_db": 14.2,
+      "uciqe_orig": 0.2985,
+      "uciqe_enh": 0.3431,
+      "uciqe_delta": 0.0445
+    },
+    {
+      "file": "butterflyfish_train_large_jpg.rf.9c28318d5abc3bc02686b5315cec822f.jpg",
+      "ssim": 0.8708,
+      "psnr_db": 15.41,
+      "uciqe_orig": 0.4281,
+      "uciqe_enh": 0.4071,
+      "uciqe_delta": -0.021
+    },
+    {
+      "file": "parrotfish_yolo_PARROTFISH_DATA395PARROT.jpg",
+      "ssim": 0.8508,
+      "psnr_db": 17.62,
+      "uciqe_orig": 0.4183,
+      "uciqe_enh": 0.4088,
+      "uciqe_delta": -0.0095
+    },
+    {
+      "file": "parrotfish_yolo_PARROTFISH_DATA1161PARROT.jpg",
+      "ssim": 0.8736,
+      "psnr_db": 17.09,
+      "uciqe_orig": 0.3955,
+      "uciqe_enh": 0.3904,
+      "uciqe_delta": -0.0051
+    },
+    {
+      "file": "parrotfish_yolo_PARROTFISH_DATA1014PARROT.jpg",
+      "ssim": 0.8961,
+      "psnr_db": 17.36,
+      "uciqe_orig": 0.3503,
+      "uciqe_enh": 0.3941,
+      "uciqe_delta": 0.0438
+    },
+    {
+      "file": "butterflyfish_train_istockphoto-467358712-612x612_jpg.rf.59cf7024048c1becd6f2e77fd87a96cc_aug0162.jpg",
+      "ssim": 0.6943,
+      "psnr_db": 14.48,
+      "uciqe_orig": 0.2845,
+      "uciqe_enh": 0.3441,
+      "uciqe_delta": 0.0595
+    },
+    {
+      "file": "angelfish_train_angelfish16_10158_png.rf.6604b239f57fe38c5d3ce11175de8ba3.jpg",
+      "ssim": 0.8997,
+      "psnr_db": 18.69,
+      "uciqe_orig": 0.4389,
+      "uciqe_enh": 0.4422,
+      "uciqe_delta": 0.0033
+    },
+    {
+      "file": "angelfish_train_angelfish39_46351_png.rf.088ae4f4c45ddfe826e04ce8c7235612.jpg",
+      "ssim": 0.9048,
+      "psnr_db": 17.87,
+      "uciqe_orig": 0.3401,
+      "uciqe_enh": 0.3334,
+      "uciqe_delta": -0.0067
+    },
+    {
+      "file": "parrotfish_yolo_PARROTFISH_DATA1187PARROT.jpg",
+      "ssim": 0.8776,
+      "psnr_db": 18.11,
+      "uciqe_orig": 0.3362,
+      "uciqe_enh": 0.3388,
+      "uciqe_delta": 0.0026
+    },
+    {
+      "file": "angelfish_train_angelfish57_56546_png.rf.714ead30d8588751e702e71fd6399b79.jpg",
+      "ssim": 0.8974,
+      "psnr_db": 18.03,
+      "uciqe_orig": 0.4259,
+      "uciqe_enh": 0.4585,
+      "uciqe_delta": 0.0326
+    },
+    {
+      "file": "parrotfish_yolo_PARROTFISH2021_DATA0561PARROT.jpg",
+      "ssim": 0.7667,
+      "psnr_db": 16.29,
+      "uciqe_orig": 0.2891,
+      "uciqe_enh": 0.355,
+      "uciqe_delta": 0.0659
+    },
+    {
+      "file": "parrotfish_yolo_PARROTFISH_DATA889PARROT.jpg",
+      "ssim": 0.8547,
+      "psnr_db": 17.7,
+      "uciqe_orig": 0.321,
+      "uciqe_enh": 0.3635,
+      "uciqe_delta": 0.0425
+    },
+    {
+      "file": "parrotfish_yolo_PARROTFISH_DATA824PARROT.jpg",
+      "ssim": 0.8028,
+      "psnr_db": 19.5,
+      "uciqe_orig": 0.2533,
+      "uciqe_enh": 0.3094,
+      "uciqe_delta": 0.0562
+    },
+    {
+      "file": "angelfish_train_angelfish90_68627_png.rf.410da6a71999390e6056706b7326b59d.jpg",
+      "ssim": 0.8514,
+      "psnr_db": 18.57,
+      "uciqe_orig": 0.3401,
+      "uciqe_enh": 0.3583,
+      "uciqe_delta": 0.0182
+    },
+    {
+      "file": "angelfish_train_angelfish245_29670_png.rf.1be1c25cac69efec90cd5ecd1826dfcf.jpg",
+      "ssim": 0.9295,
+      "psnr_db": 18.52,
+      "uciqe_orig": 0.5002,
+      "uciqe_enh": 0.5403,
+      "uciqe_delta": 0.0401
+    },
+    {
+      "file": "butterflyfish_train_forcipiger-flavissimus_jpg.rf.858b22a60ec102dd5cdfc7eeaf04e51c.jpg",
+      "ssim": 0.9264,
+      "psnr_db": 18.0,
+      "uciqe_orig": 0.4884,
+      "uciqe_enh": 0.4804,
+      "uciqe_delta": -0.008
+    },
+    {
+      "file": "angelfish_train_angelfish218_23725_png.rf.d3866209780349261bf6fde579bf8ff0.jpg",
+      "ssim": 0.9378,
+      "psnr_db": 22.34,
+      "uciqe_orig": 0.3264,
+      "uciqe_enh": 0.2979,
+      "uciqe_delta": -0.0285
+    }
+  ]
+}

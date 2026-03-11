@@ -1,0 +1,4 @@
+class_id,class_name,ap50,precision,recall,map50
+0,Butterflyfish,0.995,0.9915,1.0,0.8298
+1,Parrotfish,0.995,0.9902,1.0,0.995
+2,Angelfish,0.8644,0.8322,0.7844,0.5878

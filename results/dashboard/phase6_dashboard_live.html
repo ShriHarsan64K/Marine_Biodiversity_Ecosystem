@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Reef Health Observatory · Live</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Mono:wght@400;700&family=Josefin+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════════════
+   REEF HEALTH OBSERVATORY  v2 — DTR EDITION
+══════════════════════════════════════════════════════════ */
+:root{
+  --abyss:#010c14; --deep:#020f1c; --mid:#041828;
+  --teal:#00e5cc;  --cyan:#00c8ff; --blue:#0090d4;
+  --green:#00ff9d; --amber:#ffc200; --red:#ff3d5a;
+  --purple:#8b5cf6; --pink:#f472b6;
+  --glass:rgba(0,200,255,.04);
+  --gb:rgba(0,200,255,.12);
+  --tg:rgba(100,160,200,.55);
+  --font-d:'Orbitron',monospace;
+  --font-m:'Space Mono',monospace;
+  --font-b:'Josefin Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--abyss);color:#c8eaf8;font-family:var(--font-b);
+     overflow-x:hidden;cursor:crosshair}
+
+/* ── BG ───────────────────────────────────────────────── */
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.atm{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 55% at 8% 92%,rgba(0,40,100,.32) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 92% 8%, rgba(0,20,60,.4)  0%,transparent 60%),
+    radial-gradient(ellipse 90% 45% at 50% 100%,rgba(0,10,30,.65) 0%,transparent 60%)}
+.scl{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.018;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,#000 3px,#000 4px)}
+
+/* ── WRAP ─────────────────────────────────────────────── */
+.wrap{position:relative;z-index:10;padding:12px 15px;max-width:1820px;margin:0 auto}
+
+/* ── HEADER ───────────────────────────────────────────── */
+header{display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:13px;margin-bottom:14px;border-bottom:1px solid var(--gb);
+  position:relative}
+header::after{content:'';position:absolute;bottom:-1px;left:0;height:2px;
+  background:linear-gradient(90deg,var(--teal),var(--cyan),transparent);
+  box-shadow:0 0 12px rgba(0,229,204,.55);
+  animation:sweep 4s ease-in-out infinite}
+@keyframes sweep{0%,100%{width:28%}50%{width:52%}}
+
+.hl{display:flex;align-items:center;gap:13px}
+.emblem{width:46px;height:46px;border:1px solid rgba(0,229,204,.28);border-radius:10px;
+  background:radial-gradient(circle at 40% 40%,rgba(0,229,204,.1),transparent 70%);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  position:relative;overflow:hidden;animation:ep 3s ease-in-out infinite}
+@keyframes ep{0%,100%{box-shadow:0 0 10px rgba(0,229,204,.18)}50%{box-shadow:0 0 26px rgba(0,229,204,.48)}}
+.emblem::before{content:'';position:absolute;inset:0;
+  background:conic-gradient(from 0deg,transparent 270deg,rgba(0,229,204,.1) 360deg);
+  animation:spin 8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.htitle h1{font-family:var(--font-d);font-size:clamp(.82rem,1.15vw,1.25rem);
+  font-weight:900;letter-spacing:.15em;color:var(--teal);
+  text-shadow:0 0 18px rgba(0,229,204,.55)}
+.htitle p{font-family:var(--font-m);font-size:.48rem;color:var(--tg);
+  letter-spacing:.2em;margin-top:3px}
+
+.hr{display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+
+/* MODE BADGE */
+.mode-badge{display:flex;align-items:center;gap:7px;padding:4px 13px;
+  border-radius:20px;font-family:var(--font-d);font-size:.52rem;
+  font-weight:700;letter-spacing:.13em;transition:.4s}
+.mb-video  {background:rgba(139,92,246,.1); border:1px solid rgba(139,92,246,.38);color:#b78df7}
+.mb-image  {background:rgba(0,200,255,.07); border:1px solid rgba(0,200,255,.3); color:var(--cyan)}
+.mb-unknown{background:rgba(80,100,120,.07);border:1px solid rgba(80,100,120,.2);color:#607080}
+
+.status-pill{display:flex;align-items:center;gap:7px;padding:4px 13px;
+  border-radius:20px;border:1px solid rgba(0,229,204,.18);
+  background:rgba(0,229,204,.04);
+  font-family:var(--font-m);font-size:.56rem;letter-spacing:.14em}
+.dot{width:7px;height:7px;border-radius:50%;position:relative;flex-shrink:0}
+.dot::after{content:'';position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid currentColor;animation:sonar 2s ease-out infinite}
+@keyframes sonar{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.8);opacity:0}}
+.dot-g{background:var(--green);color:var(--green)}
+.dot-a{background:var(--amber);color:var(--amber)}
+.dot-r{background:var(--red);  color:var(--red)}
+.dot-x{background:#445;        color:#445}
+
+.hclock{font-family:var(--font-m);font-size:.55rem;color:var(--tg);
+  letter-spacing:.1em;border-left:1px solid var(--gb);padding-left:13px}
+
+/* ── MAIN GRID ────────────────────────────────────────── */
+/* Col layout: [gauge+info] [DTR] [species] [right sidebar] */
+.grid{
+  display:grid;
+  grid-template-columns: minmax(320px,2fr)  minmax(250px,1.1fr)  minmax(320px,2fr)  195px;
+  grid-template-rows: auto auto;
+  gap:9px;
+}
+
+/* ── CARD ─────────────────────────────────────────────── */
+.card{background:var(--glass);border:1px solid var(--gb);border-radius:13px;
+  padding:13px 15px;position:relative;overflow:hidden;transition:.3s}
+.card:hover{border-color:rgba(0,229,204,.2);box-shadow:0 0 32px rgba(0,0,0,.45)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,204,.28),transparent)}
+.ctag{font-family:var(--font-m);font-size:.48rem;letter-spacing:.26em;color:var(--teal);
+  opacity:.55;text-transform:uppercase;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
+.ctag::before{content:'';display:block;width:14px;height:1px;
+  background:var(--teal);box-shadow:0 0 5px var(--teal)}
+
+/* ══════════════════════════════════════════════════════
+   CELL 1,1 — MHI GAUGE  (col 1, row 1)
+══════════════════════════════════════════════════════ */
+.c-gauge{grid-column:1;grid-row:1;
+  display:flex;gap:16px;align-items:center;
+  padding:16px 18px;
+  background:linear-gradient(135deg,rgba(0,55,115,.12),rgba(0,18,44,.28))}
+
+/* Gauge wrapper — taller to give SVG text room */
+.gw{position:relative;flex-shrink:0;width:200px;height:200px}
+.gsvg{width:100%;height:100%}
+/* arc track — thinner stroke = more inner space for text */
+.g-bg  {fill:none;stroke:rgba(0,200,255,.07);stroke-width:10;stroke-linecap:round}
+.g-glow{fill:none;stroke-width:15;stroke-linecap:round;opacity:.12;
+  stroke-dasharray:565;stroke-dashoffset:565;
+  transition:stroke-dashoffset 1.2s cubic-bezier(.34,1.4,.64,1)}
+.g-main{fill:none;stroke-width:9;stroke-linecap:round;
+  filter:drop-shadow(0 0 5px currentColor);
+  stroke-dasharray:565;stroke-dashoffset:565;
+  transition:stroke-dashoffset 1.2s cubic-bezier(.34,1.4,.64,1),stroke .6s}
+
+.g-info{flex:1;display:flex;flex-direction:column;gap:10px}
+.g-site{font-family:var(--font-d);font-size:.54rem;font-weight:600;letter-spacing:.12em;
+  color:var(--teal);border-left:2px solid var(--teal);padding-left:9px;
+  text-shadow:0 0 12px rgba(0,229,204,.45);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat-row{display:flex;gap:8px}
+.stat{flex:1;padding:7px 8px;background:rgba(0,0,0,.24);border-radius:8px;
+  border:1px solid rgba(0,200,255,.07);text-align:center}
+.sv{font-family:var(--font-d);font-size:1.15rem;font-weight:700;color:var(--cyan);
+  display:block;text-shadow:0 0 12px rgba(0,200,255,.35)}
+.sk{font-family:var(--font-m);font-size:.4rem;color:var(--tg);letter-spacing:.13em;
+  margin-top:2px;display:block}
+.formula-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;
+  border-radius:7px;background:rgba(0,144,212,.08);
+  border:1px solid rgba(0,144,212,.2);
+  font-family:var(--font-m);font-size:.4rem;color:#60aacc;letter-spacing:.08em}
+.live-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:7px;
+  background:rgba(0,255,157,.04);border:1px solid rgba(0,255,157,.12);
+  font-family:var(--font-m);font-size:.48rem;color:var(--green);letter-spacing:.1em}
+.live-row span{opacity:.55}
+
+/* ══════════════════════════════════════════════════════
+   CELL 1,2 — DTR PANEL  (col 2, row 1)
+══════════════════════════════════════════════════════ */
+.c-dtr{grid-column:2;grid-row:1;
+  background:linear-gradient(135deg,rgba(139,92,246,.05),rgba(0,18,44,.3));
+  border-color:rgba(139,92,246,.18)}
+.c-dtr::before{background:linear-gradient(90deg,transparent,rgba(139,92,246,.28),transparent)}
+
+/* big DTR number */
+.dtr-num{font-family:var(--font-d);font-weight:900;font-size:3rem;line-height:1;
+  transition:color .6s,text-shadow .6s}
+.dtr-unit{font-family:var(--font-m);font-size:.48rem;color:var(--tg);margin-left:6px}
+.dtr-row1{display:flex;align-items:baseline;margin-bottom:7px}
+
+/* grade pill */
+.dtr-pill{display:inline-block;padding:3px 11px;border-radius:18px;
+  font-family:var(--font-d);font-size:.54rem;font-weight:700;letter-spacing:.13em;
+  margin-bottom:11px;transition:all .5s}
+
+/* progress bar */
+.pb-labels{display:flex;justify-content:space-between;
+  font-family:var(--font-m);font-size:.42rem;color:var(--tg);
+  letter-spacing:.1em;margin-bottom:5px}
+.pb-track{height:9px;border-radius:5px;background:rgba(0,200,255,.06);
+  border:1px solid rgba(0,200,255,.09);position:relative;margin-bottom:11px;overflow:visible}
+.pb-fill{height:100%;border-radius:5px;
+  transition:width 1.1s cubic-bezier(.34,1.4,.64,1);position:relative}
+.pb-fill::after{content:'';position:absolute;right:-3px;top:50%;
+  transform:translateY(-50%);width:13px;height:13px;border-radius:50%;
+  background:currentColor;border:2px solid var(--abyss);
+  box-shadow:0 0 7px currentColor}
+.pb-needle{position:absolute;top:-3px;bottom:-3px;width:2px;border-radius:1px;
+  background:rgba(255,255,255,.45);pointer-events:none}
+
+/* time score row */
+.ts-row{display:flex;align-items:center;justify-content:space-between;
+  padding:7px 10px;border-radius:8px;background:rgba(0,0,0,.2);
+  border:1px solid rgba(0,200,255,.07);margin-bottom:10px}
+.ts-lbl{font-family:var(--font-m);font-size:.44rem;color:var(--tg);letter-spacing:.12em}
+.ts-val{font-family:var(--font-d);font-size:.95rem;font-weight:700;color:var(--cyan)}
+
+/* combined score box */
+.cs-box{padding:10px 12px;border-radius:10px;
+  background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.16)}
+.cs-lbl{font-family:var(--font-m);font-size:.44rem;color:rgba(183,141,247,.55);
+  letter-spacing:.16em;margin-bottom:4px}
+.cs-num{font-family:var(--font-d);font-size:1.9rem;font-weight:900;
+  line-height:1;margin-bottom:2px;transition:color .6s}
+.cs-grade{font-family:var(--font-m);font-size:.48rem;letter-spacing:.13em;margin-bottom:4px}
+.cs-formula{font-family:var(--font-m);font-size:.4rem;color:var(--tg);letter-spacing:.09em}
+
+/* pending / disabled states */
+.dtr-pend{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:9px;padding:16px 0;text-align:center}
+.dtr-pend-ico{font-size:1.9rem;animation:po 2s ease-in-out infinite}
+@keyframes po{0%,100%{opacity:.3}50%{opacity:.7}}
+.dtr-pend-txt{font-family:var(--font-m);font-size:.5rem;color:var(--tg);
+  letter-spacing:.11em;line-height:1.7}
+.dtr-miss{font-family:var(--font-m);font-size:.48rem;color:var(--amber);
+  padding:3px 9px;border-radius:10px;
+  background:rgba(255,194,0,.05);border:1px solid rgba(255,194,0,.14)}
+.dtr-off{display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:9px;padding:20px 0;text-align:center}
+.dtr-off-ico{font-size:1.7rem;opacity:.28}
+.dtr-off-txt{font-family:var(--font-m);font-size:.48rem;color:var(--tg);
+  letter-spacing:.11em;line-height:1.75}
+
+/* ══════════════════════════════════════════════════════
+   CELL 1,3 — SPECIES  (col 3, row 1)
+══════════════════════════════════════════════════════ */
+.c-species{grid-column:3;grid-row:1;
+  background:linear-gradient(135deg,rgba(0,55,115,.08),rgba(0,18,44,.22))}
+.sp-list{display:flex;flex-direction:column;gap:10px}
+.sp-item{padding:11px 13px;background:rgba(0,0,0,.2);border-radius:10px;
+  border:1px solid rgba(0,200,255,.06);transition:.3s}
+.sp-item:hover{border-color:rgba(0,229,204,.16);transform:translateX(2px)}
+.sp-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.sp-name{font-family:var(--font-b);font-size:.8rem;font-weight:600;color:#c8eaf8}
+.sp-cnt{font-family:var(--font-d);font-size:1.55rem;font-weight:900;color:var(--cyan);
+  text-shadow:0 0 11px rgba(0,200,255,.38)}
+.sp-pct{font-family:var(--font-m);font-size:.46rem;color:var(--tg);
+  margin-bottom:6px;letter-spacing:.1em}
+.bar-bg{height:5px;background:rgba(255,255,255,.05);border-radius:3px;
+  overflow:hidden;margin-bottom:4px}
+.bar-fg{height:100%;border-radius:3px;
+  transition:width 1s cubic-bezier(.34,1.4,.64,1);position:relative}
+.bar-fg::after{content:'';position:absolute;right:0;top:0;bottom:0;
+  width:5px;background:rgba(255,255,255,.45);border-radius:3px;filter:blur(1px)}
+.bf-bar{background:linear-gradient(90deg,#005c8a,#00c8ff)}
+.pf-bar{background:linear-gradient(90deg,#006040,#00ff9d)}
+.af-bar{background:linear-gradient(90deg,#3a2070,#8b5cf6)}
+.sp-role{font-family:var(--font-m);font-size:.42rem;color:var(--tg);letter-spacing:.09em}
+
+/* ══════════════════════════════════════════════════════
+   CELL 1,4 — RIGHT SIDEBAR  (col 4, row 1+2)
+══════════════════════════════════════════════════════ */
+.c-right{grid-column:4;grid-row:1/3;display:flex;flex-direction:column;gap:0;
+  overflow-y:auto;max-height:calc(100vh - 120px)}
+.comp-item{margin-bottom:9px}
+.comp-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.comp-lbl{font-family:var(--font-b);font-size:.68rem;color:#9abcc8}
+.comp-sc {font-family:var(--font-d);font-size:.8rem;font-weight:700;color:var(--cyan)}
+.comp-bg {height:4px;background:rgba(255,255,255,.05);border-radius:2px;
+  overflow:hidden;margin-bottom:2px}
+.comp-fg {height:100%;border-radius:2px;
+  transition:width 1s cubic-bezier(.34,1.4,.64,1)}
+.cb1{background:linear-gradient(90deg,#005858,var(--teal))}
+.cb2{background:linear-gradient(90deg,#004820,var(--green))}
+.cb3{background:linear-gradient(90deg,#004868,var(--cyan))}
+.cb4{background:linear-gradient(90deg,#583800,var(--amber))}
+.cb5{background:linear-gradient(90deg,#320058,var(--purple))}
+.comp-meta{display:flex;justify-content:space-between;
+  font-family:var(--font-m);font-size:.4rem;color:var(--tg);letter-spacing:.07em}
+.mhi-total{display:flex;justify-content:space-between;align-items:center;
+  margin-top:9px;padding-top:7px;border-top:1px solid var(--gb)}
+.mt-lbl{font-family:var(--font-m);font-size:.46rem;letter-spacing:.18em;
+  color:var(--teal);opacity:.65}
+.mt-val{font-family:var(--font-d);font-size:1.05rem;font-weight:900;color:var(--teal);
+  text-shadow:0 0 12px rgba(0,229,204,.45)}
+
+/* ══════════════════════════════════════════════════════
+   ROW 2 — INDICES  TROPHIC  SIGNALS
+══════════════════════════════════════════════════════ */
+.c-idx {grid-column:1;grid-row:2}
+.c-trop{grid-column:2;grid-row:2}
+.c-sig {grid-column:3;grid-row:2}
+
+/* indices */
+.ix-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ix{padding:9px 11px;background:rgba(0,0,0,.18);border-radius:8px;
+  border:1px solid rgba(0,200,255,.06);
+  border-bottom:2px solid rgba(0,200,255,.22)}
+/* one-shot fade-in only used on first paint — class added once by JS */
+.ix-init{animation:fu .4s ease forwards}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.ix-key{font-family:var(--font-m);font-size:.44rem;color:var(--tg);
+  letter-spacing:.13em;margin-bottom:3px}
+.ix-val{font-family:var(--font-d);font-size:1.05rem;font-weight:700;
+  color:var(--cyan);margin-bottom:2px}
+.ix-sub{font-family:var(--font-m);font-size:.41rem;color:var(--tg);
+  letter-spacing:.07em;margin-bottom:4px}
+.ix-badge{display:inline-block;padding:2px 8px;border-radius:10px;
+  font-family:var(--font-m);font-size:.41rem;letter-spacing:.09em}
+
+/* trophic donut — animated */
+.trop-wrap{display:flex;align-items:center;gap:14px}
+.tsvg-w{flex-shrink:0;width:120px;height:120px;position:relative}
+.tsvg{width:100%;height:100%;overflow:visible}
+.t-track{fill:none;stroke:rgba(0,200,255,.07);stroke-width:18}
+/* Segments: NO inline transform attr — rotation done here only */
+.t-seg{
+  fill:none;stroke-width:18;stroke-linecap:butt;
+  transform-box:fill-box;transform-origin:center;
+  transform:rotate(-90deg);
+  transition:stroke-dasharray 1.2s cubic-bezier(.34,1.56,.64,1),
+             stroke-dashoffset 1.2s cubic-bezier(.34,1.56,.64,1)}
+.t-glow{
+  fill:none;stroke-width:26;stroke-linecap:butt;opacity:.09;
+  transform-box:fill-box;transform-origin:center;
+  transform:rotate(-90deg);
+  transition:stroke-dasharray 1.2s cubic-bezier(.34,1.56,.64,1),
+             stroke-dashoffset 1.2s cubic-bezier(.34,1.56,.64,1)}
+/* centre label */
+.t-centre{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;pointer-events:none}
+.t-centre-pct{font-family:var(--font-d);font-size:.75rem;font-weight:700;
+  color:var(--teal);line-height:1;transition:color .5s}
+.t-centre-lbl{font-family:var(--font-m);font-size:.3rem;color:var(--tg);
+  letter-spacing:.12em;margin-top:2px}
+/* legend */
+.tleg{flex:1;display:flex;flex-direction:column;gap:7px}
+.tli{display:flex;align-items:center;gap:7px;padding:6px 9px;border-radius:8px;
+  background:rgba(0,0,0,.18);transition:.3s}
+.tli:hover{background:rgba(0,0,0,.28);transform:translateX(2px)}
+.tli-dot{width:8px;height:8px;border-radius:50%;background:var(--lc);
+  box-shadow:0 0 6px var(--lc);flex-shrink:0}
+.tli-inf{flex:1}
+.tli-n{font-family:var(--font-b);font-size:.68rem;font-weight:600;color:#c8eaf8}
+.tli-s{font-family:var(--font-m);font-size:.42rem;color:var(--tg);letter-spacing:.05em}
+.tli-p{font-family:var(--font-d);font-size:.78rem;font-weight:700;color:var(--lc)}
+
+/* signals */
+.sig-flex{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:18px;font-family:var(--font-m);font-size:.47rem;
+  letter-spacing:.09em;transition:.3s}
+.chip:hover{transform:scale(1.04)}
+.c-ok  {background:rgba(0,255,157,.05); border:1px solid rgba(0,255,157,.18); color:#5affc0}
+.c-wrn {background:rgba(255,61,90,.05);  border:1px solid rgba(255,61,90,.18);  color:#ff7a94}
+.c-inf {background:rgba(0,200,255,.05);  border:1px solid rgba(0,200,255,.16);  color:#70d0ef}
+.cdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.cd-ok {background:var(--green);box-shadow:0 0 4px var(--green)}
+.cd-wrn{background:var(--red);  box-shadow:0 0 4px var(--red)}
+.cd-inf{background:var(--cyan); box-shadow:0 0 4px var(--cyan)}
+
+/* meta */
+.mi-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mi{padding:6px 8px;background:rgba(0,0,0,.18);border-radius:7px;
+  border:1px solid rgba(0,200,255,.06);text-align:center}
+.mi-k{font-family:var(--font-m);font-size:.38rem;color:var(--tg);
+  letter-spacing:.13em;margin-bottom:2px;text-transform:uppercase}
+.mi-v{font-family:var(--font-d);font-size:.62rem;font-weight:700;color:var(--cyan);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── KEYBOARD CONTROL BAR ─────────────────────────────── */
+.kbd-bar{
+  display:flex;align-items:center;gap:12px;
+  padding:7px 15px;margin-top:10px;border-radius:9px;
+  background:rgba(0,200,255,.04);border:1px solid rgba(0,200,255,.1);
+  font-family:var(--font-m);font-size:.42rem;color:var(--tg);letter-spacing:.1em}
+.kbd-bar span{opacity:.5}
+.kbtn{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;
+  border-radius:6px;background:rgba(0,200,255,.08);
+  border:1px solid rgba(0,200,255,.2);color:#a0d8ef;cursor:pointer;
+  transition:.2s;user-select:none}
+.kbtn:hover{background:rgba(0,200,255,.16);color:#fff;border-color:var(--cyan)}
+.kbtn:active{transform:scale(.93)}
+.kbtn b{font-family:var(--font-d);font-size:.5rem;color:var(--cyan)}
+.kbtn.active-btn{background:rgba(255,194,0,.12);border-color:var(--amber);color:var(--amber)}
+#kbdStatus{margin-left:auto;font-size:.44rem;color:var(--green);opacity:0;
+  transition:opacity .3s}
+#kbdStatus.show{opacity:1}
+.no-sig{position:fixed;inset:0;z-index:999;display:none;
+  background:rgba(1,12,20,.93);backdrop-filter:blur(7px);
+  flex-direction:column;align-items:center;justify-content:center;gap:15px}
+.no-sig.show{display:flex}
+.no-sig h2{font-family:var(--font-d);font-size:1.3rem;color:var(--teal);letter-spacing:.28em}
+.no-sig p{font-family:var(--font-m);font-size:.6rem;color:var(--tg);
+  letter-spacing:.18em;text-align:center;line-height:2}
+.ns-ico{font-size:2.8rem;animation:po 1.6s ease-in-out infinite}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="atm"></div>
+<div class="scl"></div>
+
+<!-- NO SIGNAL OVERLAY -->
+<div class="no-sig" id="noSig">
+  <div class="ns-ico">🪸</div>
+  <h2>NO SIGNAL</h2>
+  <p>WAITING FOR TRACKER OUTPUT<br>
+     RUN: python src/dashboard/phase6_image_test.py<br>
+     OR:  python src/dashboard/phase6_tracker_dtr.py</p>
+</div>
+
+<div class="wrap">
+
+  <!-- ═══ HEADER ═════════════════════════════════════════ -->
+  <header>
+    <div class="hl">
+      <div class="emblem">🪸</div>
+      <div class="htitle">
+        <h1>REEF HEALTH OBSERVATORY</h1>
+        <p>MARINE BIODIVERSITY ECOSYSTEM ASSESSMENT · SRM INSTITUTE OF SCIENCE AND TECHNOLOGY · REAL-TIME MONITOR</p>
+      </div>
+    </div>
+    <div class="hr">
+      <!-- MODE BADGE -->
+      <div class="mode-badge mb-unknown" id="modeBadge">
+        <span id="modeIcon">📡</span>
+        <span id="modeTxt">CONNECTING</span>
+      </div>
+      <!-- STATUS -->
+      <div class="status-pill">
+        <div class="dot dot-x" id="stDot"></div>
+        <span id="stTxt">NO SIGNAL</span>
+      </div>
+      <!-- CLOCK -->
+      <div class="hclock">
+        FPS&nbsp;<b id="hFps">--</b>&nbsp;&nbsp;
+        T&nbsp;<b id="hTime">--:--</b>&nbsp;&nbsp;
+        F&nbsp;<b id="hFrame">--</b>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ KEYBOARD CONTROLS ════════════════════════════ -->
+  <div class="kbd-bar">
+    <span>TRACKER CONTROLS</span>
+    <div class="kbtn" onclick="sendKey('q')" title="Quit tracker"><b>Q</b> Quit</div>
+    <div class="kbtn" id="kbtnP" onclick="sendKey('p')" title="Pause/Resume"><b>P</b> Pause</div>
+    <div class="kbtn" onclick="sendKey('r')" title="Reset counters"><b>R</b> Reset</div>
+    <div class="kbtn" onclick="sendKey('s')" title="Save screenshot"><b>S</b> Screenshot</div>
+    <div id="kbdStatus">✓ SENT</div>
+  </div>
+
+  <!-- ═══ MAIN GRID ═══════════════════════════════════════ -->
+  <div class="grid">
+
+    <!-- ─── COL 1 ROW 1 : MHI GAUGE ─────────────────────── -->
+    <div class="card c-gauge" id="gaugeCard">
+      <div class="gw">
+        <!--
+          viewBox 200×200  cx=cy=100  r=90  stroke-width=9
+          270° arc (gap at bottom): M 36.36,163.64  A 90,90 0 1 1 163.64,163.64
+          C = 2π×90 = 565.49  |  270° arc = 424.12  → dasharray=424 565
+          Text sits in wide open inner circle (r=90 − 9/2 = 85.5px clear)
+        -->
+        <svg class="gsvg" viewBox="0 0 200 200">
+          <path class="g-bg"
+            d="M 36.36 163.64 A 90 90 0 1 1 163.64 163.64"/>
+          <path class="g-glow" id="gGlow"
+            d="M 36.36 163.64 A 90 90 0 1 1 163.64 163.64"/>
+          <path class="g-main" id="gMain"
+            d="M 36.36 163.64 A 90 90 0 1 1 163.64 163.64"/>
+          <!--
+            Arc opens at bottom (y≈163). Centre cx=100 cy=100.
+            Safe text zone: y=105 to y=155 (inside the open gap).
+            Font-size 34 for 5-char "100.0" = ~34×5×0.6 = ~102px wide < 160px inner diameter. Safe.
+          -->
+          <text id="gcScore" x="100" y="110"
+            font-family="'Orbitron',monospace" font-weight="900" font-size="34"
+            fill="#00ff9d" text-anchor="middle" dominant-baseline="middle"
+            style="transition:fill .5s">--</text>
+          <text x="100" y="133"
+            font-family="'Space Mono',monospace" font-size="8.5"
+            fill="rgba(100,160,200,.5)" text-anchor="middle">/ 100  MHI</text>
+          <text id="gcGrade" x="100" y="148"
+            font-family="'Orbitron',monospace" font-weight="700" font-size="10"
+            fill="#00ff9d" text-anchor="middle" letter-spacing="3"
+            style="transition:fill .5s">--</text>
+          <rect id="gcAlertBg" x="62" y="156" width="76" height="14" rx="7"
+            fill="rgba(0,255,157,.1)" stroke="rgba(0,255,157,.28)" stroke-width="0.8"/>
+          <text id="gcAlert" x="100" y="166"
+            font-family="'Space Mono',monospace" font-size="7"
+            fill="#00ff9d" text-anchor="middle" letter-spacing="1.5"
+            style="transition:fill .5s">--</text>
+        </svg>
+      </div>
+      <div class="g-info">
+        <div class="g-site" id="gSite">LIVE REEF SURVEY</div>
+        <div class="stat-row">
+          <div class="stat">
+            <span class="sv" id="sTotalFish">0</span>
+            <span class="sk">DETECTIONS</span>
+          </div>
+          <div class="stat">
+            <span class="sv" id="sRichness">0</span>
+            <span class="sk">SPECIES</span>
+          </div>
+          <div class="stat">
+            <span class="sv" id="sShannon">0.000</span>
+            <span class="sk">SHANNON H'</span>
+          </div>
+        </div>
+        <div class="formula-chip">
+          🧮 0.30×H'_w · 0.25×Trophic · 0.20×Apex · 0.15×Presence · 0.10×Evenness
+        </div>
+        <div class="live-row" id="liveRow">
+          <div class="dot dot-x" id="liveDot"></div>
+          <span id="liveTxt">CONNECTING TO TRACKER</span>
+          <span>·</span>
+          <span id="liveTs">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── COL 2 ROW 1 : DTR PANEL ──────────────────────── -->
+    <div class="card c-dtr">
+      <div class="ctag">Detection Time Ratio · Video Mode</div>
+      <div id="dtrBody">
+        <!-- populated by renderDTR() -->
+      </div>
+    </div>
+
+    <!-- ─── COL 3 ROW 1 : SPECIES ────────────────────────── -->
+    <div class="card c-species">
+      <div class="ctag">Cumulative Species Detections</div>
+      <div class="sp-list" id="spList"></div>
+    </div>
+
+    <!-- ─── COL 4 ROW 1+2+3 : SIDEBAR ──────────────────── -->
+    <div class="c-right">
+      <div class="card" style="flex:0 0 auto">
+        <div class="ctag">MHI Component Breakdown</div>
+        <div id="compBody"></div>
+        <!-- divider -->
+        <div style="border-top:1px solid var(--gb);margin:10px 0 8px"></div>
+        <div class="ctag">Session Metadata</div>
+        <div class="mi-grid" id="metaGrid"></div>
+      </div>
+    </div>
+
+    <!-- ─── COL 1 ROW 2 : INDICES ────────────────────────── -->
+    <div class="card c-idx">
+      <div class="ctag">Biodiversity Indices</div>
+      <div class="ix-grid" id="ixGrid"></div>
+    </div>
+
+    <!-- ─── COL 2 ROW 2 : TROPHIC ────────────────────────── -->
+    <div class="card c-trop">
+      <div class="ctag">Trophic Structure</div>
+      <div class="trop-wrap">
+        <div class="tsvg-w">
+          <!--
+            viewBox 120×120  cx=cy=60  r=46
+            C = 2π×46 = 289.03
+            CSS .t-seg rotates -90deg so arc starts at 12 o'clock.
+            No inline transform attrs — CSS only.
+          -->
+          <svg class="tsvg" viewBox="0 0 120 120">
+            <circle class="t-track" cx="60" cy="60" r="46"/>
+            <!-- glow layers -->
+            <circle class="t-glow" id="tg1" cx="60" cy="60" r="46"
+              stroke="#00ff9d" stroke-dasharray="0 289.03" stroke-dashoffset="0"/>
+            <circle class="t-glow" id="tg2" cx="60" cy="60" r="46"
+              stroke="#8b5cf6" stroke-dasharray="0 289.03" stroke-dashoffset="0"/>
+            <!-- colour segments -->
+            <circle class="t-seg" id="ds1" cx="60" cy="60" r="46"
+              stroke="#00ff9d" stroke-dasharray="0 289.03" stroke-dashoffset="0"/>
+            <circle class="t-seg" id="ds2" cx="60" cy="60" r="46"
+              stroke="#8b5cf6" stroke-dasharray="0 289.03" stroke-dashoffset="0"/>
+          </svg>
+          <div class="t-centre">
+            <span class="t-centre-pct" id="tropDomPct">--</span>
+            <span class="t-centre-lbl" id="tropDomLbl">--</span>
+          </div>
+        </div>
+        <div class="tleg" id="tropLeg"></div>
+      </div>
+    </div>
+
+    <!-- ─── COL 3 ROW 2 : SIGNALS ────────────────────────── -->
+    <div class="card c-sig">
+      <div class="ctag">Ecological Signals</div>
+      <div class="sig-flex" id="sigFlex"></div>
+    </div>
+
+  </div><!-- /grid -->
+</div><!-- /wrap -->
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
+<script>
+/* ── PARTICLE BG ─────────────────────────────────────── */
+(function(){
+  const cv=document.getElementById('bg'),ctx=cv.getContext('2d');
+  let W,H,pts=[];
+  const resize=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight;init()};
+  const init=()=>{pts=[];for(let i=0;i<50;i++)pts.push({
+    x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.3,
+    vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.1,
+    o:.2,t:Math.random()*Math.PI*2,h:Math.random()<.5?175:200})};
+  const draw=()=>{
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.t+=.011;p.o=.12+Math.sin(p.t)*.1;
+      p.x=(p.x+p.vx+W)%W;p.y=(p.y+p.vy+H)%H;
+      const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*3.2);
+      g.addColorStop(0,`hsla(${p.h},100%,70%,${p.o})`);
+      g.addColorStop(1,'transparent');
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r*3.2,0,Math.PI*2);
+      ctx.fillStyle=g;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  };
+  addEventListener('resize',resize);resize();draw();
+})();
+
+/* ── POLLING ─────────────────────────────────────────── */
+let prevMhi=null,lastData=null;
+async function poll(){
+  try{
+    const r=await fetch('live_state.json?t='+Date.now());
+    if(!r.ok)throw new Error();
+    const d=await r.json();
+    lastData=d;
+    document.getElementById('noSig').classList.remove('show');
+    renderAll(d);
+  }catch{
+    if(!lastData)document.getElementById('noSig').classList.add('show');
+  }
+}
+poll();setInterval(poll,1000);
+
+/* ── HELPERS ─────────────────────────────────────────── */
+function gradeColor(g){
+  return {Excellent:'#00ff9d',Good:'#50e090',Moderate:'#ffc200',
+          Fair:'#ff8c40',Poor:'#ff3d5a'}[g]||'#607080';
+}
+
+/* ── STATUS + MODE BADGE ─────────────────────────────── */
+function renderStatus(d){
+  const dot=document.getElementById('stDot'),
+        txt=document.getElementById('stTxt'),
+        ldot=document.getElementById('liveDot'),
+        ltxt=document.getElementById('liveTxt'),
+        lts=document.getElementById('liveTs'),
+        mb=document.getElementById('modeBadge'),
+        mi=document.getElementById('modeIcon'),
+        mt=document.getElementById('modeTxt');
+
+  const st=d.status||'';
+  if(st==='running'){
+    dot.className='dot dot-g';txt.textContent='LIVE';
+    ldot.className='dot dot-g';ltxt.textContent='LIVE TRACKING';
+  }else if(st==='finished'){
+    dot.className='dot dot-a';txt.textContent='FINISHED';
+    ldot.className='dot dot-a';ltxt.textContent='SESSION COMPLETE';
+  }else{
+    dot.className='dot dot-x';txt.textContent='WAITING';
+    ldot.className='dot dot-x';ltxt.textContent='INITIALISING';
+  }
+  lts.textContent=new Date(d.timestamp||Date.now())
+                    .toLocaleTimeString('en-IN',{hour12:false});
+
+  document.getElementById('hFps').textContent   = d.fps_actual||'--';
+  document.getElementById('hTime').textContent  = d.session_elapsed||'--:--';
+  document.getElementById('hFrame').textContent = d.frame||'--';
+  document.getElementById('gSite').textContent  = (d.site||'LIVE REEF SURVEY').toUpperCase();
+
+  const mode=(d.mode||'').toLowerCase();
+  if(mode==='video'){
+    mb.className='mode-badge mb-video';
+    mi.textContent='🎬';mt.textContent='VIDEO MODE · DTR ACTIVE';
+  }else if(mode==='image'||mode==='images'){
+    mb.className='mode-badge mb-image';
+    mi.textContent='🖼️';mt.textContent='IMAGE MODE · DTR DISABLED';
+  }else{
+    mb.className='mode-badge mb-unknown';
+    mi.textContent='📡';mt.textContent='CONNECTING...';
+  }
+}
+
+/* ── MHI GAUGE ───────────────────────────────────────── */
+function renderGauge(d){
+  const mhi=d.mhi||0,grade=d.grade||'--',alert=d.alert||'--';
+
+  // colour by health state
+  const col = alert==='HEALTHY'  ? '#00ff9d'
+            : alert==='WARNING'  ? '#ffc200'
+            : alert==='CRITICAL' ? '#ff3d5a'
+            : '#00e5cc';
+  const colA = col+'44';
+
+  // update SVG text content + fill
+  const scoreEl = document.getElementById('gcScore');
+  const gradeEl = document.getElementById('gcGrade');
+  const alertEl = document.getElementById('gcAlert');
+  const alertBg = document.getElementById('gcAlertBg');
+  const gMain   = document.getElementById('gMain');
+  const gGlow   = document.getElementById('gGlow');
+
+  scoreEl.textContent = mhi.toFixed(1);
+  scoreEl.setAttribute('fill', col);
+  scoreEl.style.filter = `drop-shadow(0 0 8px ${col})`;
+
+  gradeEl.textContent = grade.toUpperCase();
+  gradeEl.setAttribute('fill', col);
+
+  alertEl.textContent = alert;
+  alertEl.setAttribute('fill', col);
+
+  if(alertBg){
+    alertBg.setAttribute('fill',   col+'18');
+    alertBg.setAttribute('stroke', col+'55');
+  }
+
+  gMain.style.stroke = col;
+  gGlow.style.stroke = col;
+
+  // arc progress  — r=90, C=565.49, 270° arc = 424.12
+  const off = 565 - (mhi/100)*424;
+  gMain.style.strokeDashoffset = off;
+  gGlow.style.strokeDashoffset = off;
+
+  // flash on significant change
+  if(prevMhi!==null && Math.abs(mhi-prevMhi)>1){
+    scoreEl.style.opacity='.3';
+    setTimeout(()=>scoreEl.style.opacity='1',400);
+  }
+  prevMhi=mhi;
+
+  document.getElementById('sTotalFish').textContent=(d.total_fish||0).toLocaleString();
+  document.getElementById('sRichness').textContent =(d.indices||{}).species_richness||'0';
+  document.getElementById('sShannon').textContent  =((d.indices||{}).shannon_H||0).toFixed(3);
+}
+
+/* ── DTR PANEL ───────────────────────────────────────── */
+function renderDTR(d){
+  const el=document.getElementById('dtrBody');
+  const mode=(d.mode||'').toLowerCase();
+  const dtr=d.dtr||{};
+  const combo=d.combined||{};
+
+  /* IMAGE MODE — not applicable */
+  if(mode==='image'||mode==='images'){
+    el.innerHTML=`<div class="dtr-off">
+      <div class="dtr-off-ico">🖼️</div>
+      <div class="dtr-off-txt">
+        DTR IS NOT APPLICABLE<br>IN IMAGE MODE<br><br>
+        DTR requires a continuous<br>time axis from a live survey.<br><br>
+        Switch to VIDEO MODE to<br>see DTR + Combined Score.
+      </div>
+    </div>`;
+    return;
+  }
+
+  /* VIDEO — pending (not all species seen yet) */
+  if(!dtr.complete){
+    const miss=(d.species_missing||[]).join(', ')||'...';
+    el.innerHTML=`<div class="dtr-pend">
+      <div class="dtr-pend-ico">⏳</div>
+      <div class="dtr-pend-txt">WAITING FOR ALL SPECIES<br>TO BE DETECTED</div>
+      <div class="dtr-miss">Still needed: ${miss}</div>
+      <div class="dtr-pend-txt" style="margin-top:6px;font-size:.42rem">
+        Combined score will appear<br>once all 3 species are found
+      </div>
+    </div>`;
+    return;
+  }
+
+  /* VIDEO — complete, show full panel */
+  const dtrPct = dtr.dtr_pct||0;
+  const dtrGrd = dtr.dtr_grade||'--';
+  const timeSc = dtr.time_score||0;
+  const atFrame= dtr.complete_at_frame||0;
+  const atPct  = dtr.complete_at_pct||0;
+  const gc     = gradeColor(dtrGrd);
+
+  const csVal  = combo.combined_score ?? combo.combined ?? 0;
+  const csGrd  = combo.combined_grade||'--';
+  const csGc   = gradeColor(csGrd);
+  const fmla   = combo.formula
+                 || `0.70 × ${(d.mhi||0).toFixed(1)} + 0.30 × ${timeSc.toFixed(1)} = ${Number(csVal).toFixed(1)}`;
+
+  el.innerHTML=`
+    <!-- DTR big number -->
+    <div class="dtr-row1">
+      <span class="dtr-num" style="color:${gc};text-shadow:0 0 18px ${gc}77">
+        ${Number(dtrPct).toFixed(1)}
+      </span>
+      <span class="dtr-unit">% INTO SURVEY</span>
+    </div>
+    <div class="dtr-pill"
+      style="background:${gc}18;color:${gc};border:1px solid ${gc}40">
+      ${dtrGrd.toUpperCase()}
+    </div>
+
+    <!-- Progress bar: shows WHERE in the video all species were found -->
+    <div class="pb-labels">
+      <span>START</span>
+      <span>ALL SPECIES @ ${Number(atPct).toFixed(1)}%  (frame ${atFrame})</span>
+      <span>END</span>
+    </div>
+    <div class="pb-track">
+      <div class="pb-fill"
+        style="width:${dtrPct}%;background:${gc};color:${gc};box-shadow:0 0 7px ${gc}55">
+      </div>
+      <div class="pb-needle" style="left:${dtrPct}%"></div>
+    </div>
+
+    <!-- Time Score -->
+    <div class="ts-row">
+      <span class="ts-lbl">TIME SCORE = (1 − DTR) × 100</span>
+      <span class="ts-val">${Number(timeSc).toFixed(1)}</span>
+    </div>
+
+    <!-- Combined Score -->
+    <div class="cs-box">
+      <div class="cs-lbl">COMBINED SCORE — VIDEO MODE FINAL</div>
+      <div class="cs-num"
+        style="color:${csGc};text-shadow:0 0 16px ${csGc}55">
+        ${Number(csVal).toFixed(1)}<span style="font-size:.5rem;color:var(--tg)"> / 100</span>
+      </div>
+      <div class="cs-grade" style="color:${csGc}">${csGrd.toUpperCase()}</div>
+      <div class="cs-formula">${fmla}</div>
+    </div>`;
+}
+
+/* ── SPECIES ─────────────────────────────────────────── */
+function renderSpecies(d){
+  const total=Math.max(d.total_fish||1,1),c=d.counts||{};
+  const sp=[
+    {name:'Butterflyfish',icon:'🦋',role:'Coral health indicator · w=2.0',cls:'bf-bar',n:c.Butterflyfish||0},
+    {name:'Parrotfish',   icon:'🐦',role:'Algae control indicator · w=1.6',cls:'pf-bar',n:c.Parrotfish||0},
+    {name:'Angelfish',    icon:'🐠',role:'Reef structure indicator · w=1.1',cls:'af-bar',n:c.Angelfish||0},
+  ];
+  document.getElementById('spList').innerHTML=sp.map(s=>{
+    const pct=(s.n/total*100).toFixed(1);
+    return `<div class="sp-item">
+      <div class="sp-hdr">
+        <span class="sp-name">${s.icon} ${s.name}</span>
+        <span class="sp-cnt">${s.n.toLocaleString()}</span>
+      </div>
+      <div class="sp-pct">${pct}% of community</div>
+      <div class="bar-bg"><div class="bar-fg ${s.cls}" style="width:${pct}%"></div></div>
+      <div class="sp-role">${s.role}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── MHI COMPONENTS ──────────────────────────────────── */
+function renderComponents(d){
+  const c=d.components||{};
+  const rows=[
+    {l:"Weighted H'_w",  s:c.weighted_shannon_score||0,  w:.30,cl:'cb1'},
+    {l:'Trophic Balance',s:c.trophic_balance_score||0,   w:.25,cl:'cb2'},
+    {l:'Apex Predator',  s:c.apex_predator_score||0,     w:.20,cl:'cb3'},
+    {l:'Indicator Pres.',s:c.indicator_presence_score||0,w:.15,cl:'cb4'},
+    {l:"Pielou J'",      s:c.evenness_score||0,          w:.10,cl:'cb5'},
+  ];
+  const tot=rows.reduce((a,r)=>a+r.s*r.w,0);
+  document.getElementById('compBody').innerHTML=
+    rows.map(r=>`<div class="comp-item">
+      <div class="comp-hdr">
+        <span class="comp-lbl">${r.l}</span>
+        <span class="comp-sc">${r.s.toFixed(1)}</span>
+      </div>
+      <div class="comp-bg"><div class="comp-fg ${r.cl}" style="width:${r.s}%"></div></div>
+      <div class="comp-meta"><span>×${r.w.toFixed(2)}</span><span>→ ${(r.s*r.w).toFixed(2)}</span></div>
+    </div>`).join('')+
+    `<div class="mhi-total">
+       <span class="mt-lbl">TOTAL MHI</span>
+       <span class="mt-val">${tot.toFixed(2)}</span>
+     </div>`;
+}
+
+/* ── INDICES ─────────────────────────────────────────── */
+let ixBuilt = false;
+function renderIndices(d){
+  const idx=d.indices||{},S=idx.species_richness||1;
+  const hmax=S>1?Math.log(S):1;
+  const ratio=Math.min(1,(idx.shannon_H||0)/hmax);
+  const hg=ratio>=.85?['Excellent','#00ff9d']:ratio>=.65?['Good','#00e5cc']:
+           ratio>=.45?['Fair','#ffc200']:['Poor','#ff3d5a'];
+  const items=[
+    {id:'ix0',k:"H' Shannon", v:(idx.shannon_H||0).toFixed(4),  s:`ratio ${ratio.toFixed(3)}`, b:hg[0],a:hg[1]},
+    {id:'ix1',k:'D Simpson',  v:(idx.simpsons_D||0).toFixed(4), s:'diversity prob',
+     b:(idx.simpsons_D||0)>.5?'Moderate':'Low',a:(idx.simpsons_D||0)>.5?'#00c8ff':'#ffc200'},
+    {id:'ix2',k:"J' Evenness",v:(idx.pielou_J||0).toFixed(4),   s:'equitability',
+     b:(idx.pielou_J||0)>.7?'Even':'Skewed',a:(idx.pielou_J||0)>.7?'#00ff9d':'#ffc200'},
+    {id:'ix3',k:'Richness S', v:S, s:'species', b:'Full scope', a:'#8b5cf6'},
+  ];
+
+  if(!ixBuilt){
+    // Build DOM once with fade-in animation
+    document.getElementById('ixGrid').innerHTML=items.map(it=>`
+      <div class="ix ix-init" id="${it.id}" style="border-bottom-color:${it.a}44">
+        <div class="ix-key">${it.k}</div>
+        <div class="ix-val" id="${it.id}v" style="color:${it.a}">${it.v}</div>
+        <div class="ix-sub" id="${it.id}s">${it.s}</div>
+        <div class="ix-badge" id="${it.id}b"
+          style="background:${it.a}18;color:${it.a};border:1px solid ${it.a}33">${it.b}</div>
+      </div>`).join('');
+    ixBuilt=true;
+  } else {
+    // Update values in-place — NO DOM rebuild, NO animation re-trigger, NO border flash
+    items.forEach(it=>{
+      const vEl=document.getElementById(it.id+'v');
+      const sEl=document.getElementById(it.id+'s');
+      const bEl=document.getElementById(it.id+'b');
+      if(vEl) vEl.textContent=it.v;
+      if(sEl) sEl.textContent=it.s;
+      if(bEl) bEl.textContent=it.b;
+    });
+  }
+}
+
+/* ── TROPHIC ─────────────────────────────────────────── */
+let tropBuilt = false;
+function renderTrophic(d){
+  const gp=(d.trophic||{}).group_pcts||{};
+  const gc=(d.trophic||{}).group_counts||{};
+  // r=46 → C = 2π×46 = 289.03
+  const C    = 289.03;
+  const herb = gp.Herbivores   || 0;
+  const coral= gp.Corallivores || 0;
+  const hLen = (herb  / 100) * C;
+  const cLen = (coral / 100) * C;
+
+  // Arc segments — smooth CSS transition animates them automatically
+  ['ds1','tg1'].forEach(id=>{
+    const el=document.getElementById(id); if(!el)return;
+    el.style.strokeDasharray  = `${hLen.toFixed(2)} ${C.toFixed(2)}`;
+    el.style.strokeDashoffset = '0';
+  });
+  ['ds2','tg2'].forEach(id=>{
+    const el=document.getElementById(id); if(!el)return;
+    el.style.strokeDasharray  = `${cLen.toFixed(2)} ${C.toFixed(2)}`;
+    el.style.strokeDashoffset = `${-(hLen).toFixed(2)}`;
+  });
+
+  // Centre label — in-place
+  const domPct = herb >= coral ? herb : coral;
+  const domCol = herb >= coral ? '#00ff9d' : '#8b5cf6';
+  const dpEl=document.getElementById('tropDomPct');
+  const dlEl=document.getElementById('tropDomLbl');
+  if(dpEl){dpEl.textContent=`${domPct.toFixed(0)}%`;dpEl.style.color=domCol;}
+  if(dlEl) dlEl.textContent = herb >= coral ? 'HERB' : 'CORAL';
+
+  // Legend — build once (only when gp has data), update text in-place after
+  const cols ={Herbivores:'#00ff9d',Corallivores:'#8b5cf6'};
+  const notes={Herbivores:'Parrotfish',Corallivores:'BF + Angelfish'};
+  const entries = Object.entries(gp);
+  if(!tropBuilt && entries.length > 0){
+    document.getElementById('tropLeg').innerHTML=
+      entries.map(([g,p])=>`
+      <div class="tli" id="tli_${g}" style="--lc:${cols[g]||'#00e5cc'}">
+        <div class="tli-dot"></div>
+        <div class="tli-inf">
+          <div class="tli-n">${g}</div>
+          <div class="tli-s" id="tlis_${g}">${gc[g]||0} fish · ${notes[g]||''}</div>
+        </div>
+        <div class="tli-p" id="tlip_${g}">${Number(p).toFixed(1)}%</div>
+      </div>`).join('');
+    tropBuilt=true;
+  } else if(tropBuilt) {
+    entries.forEach(([g,p])=>{
+      const s=document.getElementById('tlis_'+g);
+      const pEl=document.getElementById('tlip_'+g);
+      if(s)  s.textContent=`${gc[g]||0} fish · ${notes[g]||''}`;
+      if(pEl)pEl.textContent=`${Number(p).toFixed(1)}%`;
+    });
+  }
+}
+
+/* ── SIGNALS ─────────────────────────────────────────── */
+function renderSignals(d){
+  const all=[
+    ...((d.ecological_signal||'').split(' | ').filter(Boolean)),
+    ...(d.degradation_signals||[])
+  ];
+  if(!all.length){
+    document.getElementById('sigFlex').innerHTML=
+      '<div class="chip c-inf"><div class="cdot cd-inf"></div>Awaiting data...</div>';
+    return;
+  }
+  document.getElementById('sigFlex').innerHTML=all.map(s=>{
+    const ok=s.startsWith('✅'),warn=s.startsWith('🔴')||s.startsWith('🟠');
+    return `<div class="chip ${ok?'c-ok':warn?'c-wrn':'c-inf'}">
+      <div class="cdot ${ok?'cd-ok':warn?'cd-wrn':'cd-inf'}"></div>
+      ${s.replace(/^[✅🔴🟠🟡]\s*/,'')}
+    </div>`;
+  }).join('');
+}
+
+/* ── META ────────────────────────────────────────────── */
+function renderMeta(d){
+  const ts=new Date(d.timestamp||Date.now());
+  const items=[
+    {k:'DATE',   v:ts.toLocaleDateString('en-IN')},
+    {k:'TIME',   v:ts.toLocaleTimeString('en-IN',{hour12:false})},
+    {k:'FRAMES', v:(d.frame||0).toLocaleString()},
+    {k:'SPECIES',v:(d.indices||{}).species_richness||'--'},
+    {k:'FPS',    v:d.fps_actual||'--'},
+    {k:'ELAPSED',v:d.session_elapsed||'--'},
+  ];
+  document.getElementById('metaGrid').innerHTML=items.map(m=>`
+    <div class="mi">
+      <div class="mi-k">${m.k}</div>
+      <div class="mi-v">${m.v}</div>
+    </div>`).join('');
+}
+
+/* ── KEYBOARD CONTROLS ───────────────────────────────── */
+// Writes cmd.json which the tracker polls every 0.5s
+async function sendKey(key){
+  try{
+    // POST to a simple relay — falls back to fetch cmd.json write via server
+    await fetch('cmd.json',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({cmd:key,ts:Date.now()})
+    });
+  }catch(e){
+    // Server doesn't support PUT — show tip instead
+  }
+  // Visual feedback
+  const s=document.getElementById('kbdStatus');
+  s.textContent=`✓ KEY [${key.toUpperCase()}] — focus tracker window & press ${key.toUpperCase()}`;
+  s.classList.add('show');
+  setTimeout(()=>s.classList.remove('show'),3000);
+  // Pause button toggle style
+  if(key==='p'){
+    const btn=document.getElementById('kbtnP');
+    btn.classList.toggle('active-btn');
+    btn.querySelector('b').textContent=btn.classList.contains('active-btn')?'▶':'P';
+    btn.childNodes[1].textContent=btn.classList.contains('active-btn')?' Resume':' Pause';
+  }
+}
+// Also listen for physical key presses when browser tab is focused
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  const k=e.key.toLowerCase();
+  if(['q','p','r','s'].includes(k)){ e.preventDefault(); sendKey(k); }
+});
+
+/* ── MASTER RENDER ───────────────────────────────────── */
+function renderAll(d){
+  renderStatus(d);
+  renderGauge(d);
+  renderDTR(d);
+  renderSpecies(d);
+  renderComponents(d);
+  renderIndices(d);
+  renderTrophic(d);
+  renderSignals(d);
+  renderMeta(d);
+}
+</script>
+</body>
+</html>

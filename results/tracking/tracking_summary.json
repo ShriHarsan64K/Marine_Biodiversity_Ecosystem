@@ -1,0 +1,11 @@
+{
+  "phase": "4A",
+  "frames_processed": 364,
+  "unique_fish_total": 8,
+  "unique_per_class": {
+    "Angelfish": 6,
+    "Butterflyfish": 1,
+    "Parrotfish": 1
+  },
+  "total_track_ids": 6
+}

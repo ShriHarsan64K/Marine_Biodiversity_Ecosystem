@@ -1,0 +1,104 @@
+{
+  "site": "SRM Marine Survey - Test Set",
+  "timestamp": "2026-03-10T02:04:35.515863",
+  "counts": {
+    "Angelfish": 271,
+    "Butterflyfish": 56,
+    "Parrotfish": 163
+  },
+  "total_fish": 490,
+  "mhi": 70.59,
+  "grade": "Good",
+  "emoji": "\ud83d\udfe2",
+  "alert": "HEALTHY",
+  "components": {
+    "weighted_shannon_score": 83.78,
+    "trophic_balance_score": 47.53,
+    "apex_predator_score": 50.0,
+    "indicator_presence_score": 100.0,
+    "evenness_score": 85.71
+  },
+  "weights": {
+    "weighted_shannon": 0.3,
+    "trophic_balance": 0.25,
+    "apex_predator": 0.2,
+    "indicator_presence": 0.15,
+    "evenness": 0.1
+  },
+  "indices": {
+    "shannon_H": 0.941599,
+    "weighted_H": 0.306794,
+    "simpsons_D": 0.570404,
+    "pielou_J": 0.85708,
+    "species_richness": 3
+  },
+  "trophic": {
+    "trophic_balance_score": 47.53,
+    "group_counts": {
+      "Corallivores": 327,
+      "Herbivores": 163
+    },
+    "group_pcts": {
+      "Corallivores": 66.73,
+      "Herbivores": 33.27
+    },
+    "status_per_group": {
+      "Apex Predators": {
+        "count": 0,
+        "pct": 0.0,
+        "target_lo": 5.0,
+        "target_hi": 10.0,
+        "score": null,
+        "status": "\u2b1c Not in dataset scope"
+      },
+      "Mesopredators": {
+        "count": 0,
+        "pct": 0.0,
+        "target_lo": 15.0,
+        "target_hi": 20.0,
+        "score": null,
+        "status": "\u2b1c Not in dataset scope"
+      },
+      "Herbivores": {
+        "count": 163,
+        "pct": 33.27,
+        "target_lo": 35.0,
+        "target_hi": 45.0,
+        "score": 95.06,
+        "status": "\ud83d\udfe1 Low (33.3% vs target 35.0-45.0%)"
+      },
+      "Planktivores": {
+        "count": 0,
+        "pct": 0.0,
+        "target_lo": 25.0,
+        "target_hi": 35.0,
+        "score": null,
+        "status": "\u2b1c Not in dataset scope"
+      },
+      "Corallivores": {
+        "count": 327,
+        "pct": 66.73,
+        "target_lo": 5.0,
+        "target_hi": 10.0,
+        "score": 0.0,
+        "status": "\ud83d\udfe0 High (66.7% vs target 5.0-10.0%)"
+      },
+      "Cleaners": {
+        "count": 0,
+        "pct": 0.0,
+        "target_lo": 1.0,
+        "target_hi": 5.0,
+        "score": null,
+        "status": "\u2b1c Not in dataset scope"
+      }
+    },
+    "degradation_signals": [
+      "\u2705 No degradation signals detected within dataset scope"
+    ],
+    "overall_trophic_status": "Stressed"
+  },
+  "ecological_signal": "Coral habitat present (Butterflyfish detected) | Algae control functioning (Parrotfish detected) | Reef structure intact (Angelfish detected) | \u2705 Good weighted diversity \u2014 healthy reef",
+  "degradation_signals": [
+    "\u2705 No degradation signals detected within dataset scope"
+  ]
+}

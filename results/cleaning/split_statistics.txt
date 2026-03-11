@@ -1,0 +1,13 @@
+DATASET SPLIT STATISTICS — 3-CLASS PROJECT
+=======================================================
+
+Total  : 5201
+Train  : 4421 (85.0%)
+Val    : 416   (8.0%)
+Test   : 364  (7.0%)
+
+Class                   Train     Val    Test
+------------------------------------------------
+  Butterflyfish           680      64      56
+  Parrotfish             1982     186     163
+  Angelfish              1759     166     145

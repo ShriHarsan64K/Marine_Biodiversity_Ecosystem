@@ -1,0 +1,9 @@
+{
+  "total_images": 5000,
+  "total_boxes": 7906,
+  "class_totals": {
+    "2": 4968,
+    "0": 607,
+    "1": 2331
+  }
+}

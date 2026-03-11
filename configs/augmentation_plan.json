@@ -1,0 +1,26 @@
+{
+  "0": {
+    "class_name": "Butterflyfish",
+    "current_images": 599,
+    "target_images": 800,
+    "images_needed": 201,
+    "augmentation_factor": 1.336,
+    "augmentation_needed": true
+  },
+  "1": {
+    "class_name": "Parrotfish",
+    "current_images": 2331,
+    "target_images": 800,
+    "images_needed": 0,
+    "augmentation_factor": 0.343,
+    "augmentation_needed": false
+  },
+  "2": {
+    "class_name": "Angelfish",
+    "current_images": 2070,
+    "target_images": 800,
+    "images_needed": 0,
+    "augmentation_factor": 0.386,
+    "augmentation_needed": false
+  }
+}

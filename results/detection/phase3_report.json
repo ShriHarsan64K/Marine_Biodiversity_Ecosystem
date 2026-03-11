@@ -1,0 +1,53 @@
+{
+  "project": "Marine Biodiversity Ecosystem Health Assessment",
+  "phase": "3C",
+  "classes": [
+    "Butterflyfish",
+    "Parrotfish",
+    "Angelfish"
+  ],
+  "target_map50": 0.85,
+  "target_fps": 25,
+  "overall": {
+    "map50": 0.9515,
+    "map5095": 0.8042,
+    "precision": 0.938,
+    "recall": 0.9281
+  },
+  "per_class": [
+    {
+      "class_id": 0,
+      "class_name": "Butterflyfish",
+      "ap50": 0.995,
+      "precision": 0.9915,
+      "recall": 1.0,
+      "map50": 0.8298
+    },
+    {
+      "class_id": 1,
+      "class_name": "Parrotfish",
+      "ap50": 0.995,
+      "precision": 0.9902,
+      "recall": 1.0,
+      "map50": 0.995
+    },
+    {
+      "class_id": 2,
+      "class_name": "Angelfish",
+      "ap50": 0.8644,
+      "precision": 0.8322,
+      "recall": 0.7844,
+      "map50": 0.5878
+    }
+  ],
+  "fps": {
+    "avg_latency_ms": 16.84,
+    "std_latency_ms": 1.4,
+    "avg_fps": 59.4,
+    "min_fps": 33.1,
+    "max_fps": 62.4,
+    "target_fps": 25,
+    "fps_pass": true
+  },
+  "pass": true
+}
